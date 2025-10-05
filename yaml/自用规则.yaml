@@ -8,7 +8,7 @@ proxy-groups:
     type: url-test
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
     include-all: true
-    filter: (?i)ix|bage|cf|jinx|aws|bero
+    filter: (?i)ix|bage|cf|jinx|aws|bero|bwh|Riddler|深港出口
     url: http://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
@@ -17,7 +17,7 @@ proxy-groups:
     type: url-test
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
     include-all: true
-    filter: ^(?!.*(?i)(ix|bage|cf|jinx|aws|bero)).*
+    filter: ^(?!.*(?i)(ix|bage|cf|jinx|aws|bero|bwh|Riddler|深港出口)).*
     url: http://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
@@ -73,3 +73,4 @@ rules:
   - "RULE-SET,ChinaCompanyIp,DIRECT"
   - "GEOIP,CN,DIRECT"
   - "MATCH,主力"
+
