@@ -1,0 +1,77 @@
+# ======= Clash / Stash 双分组覆写模板（主力 + 备用测速版） =======
+# 主力组：手动选择 + 包含 ix、bage、cf、jinx、aws(仅小写)、bero、bwh、Riddler、深港出口、出口
+# 备用组：自动测速，不含主力关键词的节点
+# 国内直连，国外走主力，广告拦截启用
+
+proxy-groups:
+  - name: 主力
+    type: select
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
+    include-all: true
+    # 匹配规则：ix、bage、cf、jinx、aws(小写)、bero、bwh、Riddler、深港出口、出口
+    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|深港出口|出口)|(?-i)aws
+    proxies:
+      - 备用
+      - DIRECT
+
+  - name: 备用
+    type: url-test
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
+    include-all: true
+    # 匹配非主力节点
+    filter: ^(?!.*((?i)(ix|bage|cf|jinx|bero|bwh|riddler|深港出口|出口)|(?-i)aws)).*
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+
+# ======= 规则集定义 =======
+rule-providers:
+  LocalAreaNetwork:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/LocalAreaNetwork.list
+    path: ./ruleset/LocalAreaNetwork.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+
+  UnBan:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/UnBan.list
+    path: ./ruleset/UnBan.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+
+  BanAD:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/BanAD.list
+    path: ./ruleset/BanAD.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+
+  ChinaDomain:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ChinaDomain.list
+    path: ./ruleset/ChinaDomain.list
+    behavior: domain
+    interval: 86400
+    format: text
+    type: http
+
+  ChinaCompanyIp:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ChinaCompanyIp.list
+    path: ./ruleset/ChinaCompanyIp.list
+    behavior: ipcidr
+    interval: 86400
+    format: text
+    type: http
+
+# ======= 规则匹配顺序 =======
+rules:
+  - "RULE-SET,LocalAreaNetwork,DIRECT"
+  - "RULE-SET,UnBan,DIRECT"
+  - "RULE-SET,BanAD,REJECT"
+  - "RULE-SET,ChinaDomain,DIRECT"
+  - "RULE-SET,ChinaCompanyIp,DIRECT"
+  - "GEOIP,CN,DIRECT"
+  - "MATCH,主力"
