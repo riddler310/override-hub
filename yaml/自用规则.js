@@ -196,7 +196,6 @@ function buildProxyGroups() {
             "filter": mainProxyFilter,
             "proxies": [
                 "链式代理",
-                "落地节点",
                 "备用",
                 "DIRECT"
             ]
