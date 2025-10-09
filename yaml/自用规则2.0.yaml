@@ -50,7 +50,7 @@ proxy-groups:
     type: select
     include-all: true
     # 匹配除主力节点和备用节点的节点
-    filter: ^(?!.*((?i)(ix|bage|cf|jinx|aws|bero|bwh|riddler|yyy|深港出口|出口|proxy|backup|备用|test|测速))).*
+    filter: .*
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png
     proxies:
       - DIRECT
@@ -106,3 +106,4 @@ rules:
   - "RULE-SET,ChinaCompanyIp,DIRECT"
   - "GEOIP,CN,DIRECT"
   - "MATCH,主力"
+
