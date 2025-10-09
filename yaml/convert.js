@@ -1,38 +1,88 @@
 /*
-powerfullz 的 Substore 订阅转换脚本 - 根据用户要求重新分类代理组
+powerfullz 的 Substore 订阅转换脚本
 https://github.com/powerfullz/override-rules
 传入参数：
 - loadbalance: 启用负载均衡 (默认false)
 - landing: 启用落地节点功能 (默认false)
-- ipv6: 启用 IPv6 支持 (默认false)
+- ipv6: 启用 IPv6 支持 (默认false -> 默认 true)
 - full: 启用完整配置，用于纯内核启动 (默认false)
 - keepalive: 启用 tcp-keep-alive (默认false)
-- fakeip: DNS 使用 FakeIP 而不是 RedirHost (默认false)
+- fakeip: DNS 使用 FakeIP 而不是 RedirHost (默认false -> 默认 true)
 */
 
 const inArg = typeof $arguments !== 'undefined' ? $arguments : {};
 const loadBalance = parseBool(inArg.loadbalance) || false,
     landing = parseBool(inArg.landing) || false,
-    ipv6Enabled = parseBool(inArg.ipv6) || false,
+    // ⚠️ 默认开启 IPv6
+    ipv6Enabled = parseBool(inArg.ipv6) || true,
     fullConfig = parseBool(inArg.full) || false,
     keepAliveEnabled = parseBool(inArg.keepalive) || false,
-    fakeIPEnabled = parseBool(inArg.fakeip) || false;
+    // ⚠️ 默认开启 FakeIP
+    fakeIPEnabled = parseBool(inArg.fakeip) || true;
 
-// -------------------------------------------------------------------------------- //
-// 辅助函数 (保留)
-// -------------------------------------------------------------------------------- //
+// 原始脚本中与动态代理组生成相关的函数已删除或留空。
 
-function parseBool(value) {
-    if (typeof value === "boolean") return value;
-    if (typeof value === "string") {
-        return value.toLowerCase() === "true" || value === "1";
+// ⚠️ 替换后的静态代理组配置
+const staticProxyGroups = [
+    {
+        "name": "主力",
+        "type": "select",
+        "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png",
+        "include-all": true,
+        // 匹配规则：ix、bage、cf、jinx、aws(小写)、bero、bwh、riddler、yyy、深港出口、出口
+        "filter": "(?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox)|(?-i)aws",
+        "proxies": [
+            "链式代理",
+            "落地节点",
+            "备用",
+            "DIRECT"
+        ]
+    },
+    {
+        "name": "备用",
+        "type": "url-test",
+        "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png",
+        "include-all": true,
+        // 匹配非主力节点
+        "filter": "^(?!.*((?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口)|(?-i)aws)).*",
+        "url": "http://www.gstatic.com/generate_204",
+        "interval": 300,
+        "tolerance": 50
+    },
+    // ===== 链式代理部分 =====
+    {
+        "name": "链式代理",
+        "type": "relay",
+        "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png",
+        "proxies": [
+            "中转节点",
+            "落地节点"
+        ]
+    },
+    {
+        "name": "中转节点",
+        "type": "select",
+        "include-all": true,
+        // 匹配主力 + 备用所有节点
+        "filter": ".*",
+        "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Domestic.png",
+        "proxies": [
+            "DIRECT"
+        ]
+    },
+    {
+        "name": "落地节点",
+        "type": "select",
+        "include-all": true,
+        // 匹配除主力节点和备用节点的节点
+        "filter": ".*",
+        "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png",
+        "proxies": [
+            "DIRECT"
+        ]
     }
-    return false;
-}
+];
 
-// -------------------------------------------------------------------------------- //
-// Rule Providers (保留)
-// -------------------------------------------------------------------------------- //
 
 const ruleProviders = {
     "ADBlock": {
@@ -102,47 +152,60 @@ const ruleProviders = {
     }
 }
 
-// -------------------------------------------------------------------------------- //
-// Rules (保留)
-// -------------------------------------------------------------------------------- //
-
+// 规则已调整为指向新的策略组，如 "主力"
 const rules = [
-    "RULE-SET,ADBlock,广告拦截",
-    "RULE-SET,AdditionalFilter,广告拦截",
-    "RULE-SET,SogouInput,搜狗输入法",
-    "RULE-SET,TruthSocial,Truth Social",
-    "RULE-SET,StaticResources,静态资源",
-    "RULE-SET,CDNResources,静态资源",
-    "RULE-SET,AdditionalCDNResources,静态资源",
-    "RULE-SET,AI,AI",
-    "RULE-SET,Crypto,Crypto",
-    "RULE-SET,EHentai,E-Hentai",
-    "RULE-SET,TikTok,TikTok",
-    "RULE-SET,SteamFix,直连",
-    "RULE-SET,GoogleFCM,直连",
-    "GEOSITE,GOOGLE-PLAY@CN,直连",
-    "GEOSITE,TELEGRAM,Telegram",
-    "GEOSITE,YOUTUBE,YouTube",
-    "GEOSITE,NETFLIX,Netflix",
-    "GEOSITE,SPOTIFY,Spotify",
-    "GEOSITE,BAHAMUT,Bahamut",
-    "GEOSITE,BILIBILI,Bilibili",
-    "GEOSITE,MICROSOFT@CN,直连",
-    "GEOSITE,PIKPAK,PikPak",
-    "GEOSITE,GFW,选择节点",
-    "GEOSITE,CN,直连",
-    "GEOSITE,PRIVATE,直连",
-    "GEOIP,NETFLIX,Netflix,no-resolve",
-    "GEOIP,TELEGRAM,Telegram,no-resolve",
-    "GEOIP,CN,直连",
-    "GEOIP,PRIVATE,直连",
-    "DST-PORT,22,SSH(22端口)",
-    "MATCH,选择节点"
+    "RULE-SET,ADBlock,REJECT",
+    "RULE-SET,AdditionalFilter,REJECT",
+    "RULE-SET,SogouInput,直连",
+    "RULE-SET,TruthSocial,主力",
+    "RULE-SET,StaticResources,主力",
+    "RULE-SET,CDNResources,主力",
+    "RULE-SET,AdditionalCDNResources,主力",
+    "RULE-SET,AI,主力",
+    "RULE-SET,Crypto,主力",
+    "RULE-SET,EHentai,主力",
+    "RULE-SET,TikTok,主力",
+    "RULE-SET,SteamFix,DIRECT",
+    "RULE-SET,GoogleFCM,DIRECT",
+    "GEOSITE,GOOGLE-PLAY@CN,DIRECT",
+    "GEOSITE,TELEGRAM,主力",
+    "GEOSITE,YOUTUBE,主力",
+    "GEOSITE,NETFLIX,主力",
+    "GEOSITE,SPOTIFY,主力",
+    "GEOSITE,BAHAMUT,主力",
+    "GEOSITE,BILIBILI,主力",
+    "GEOSITE,MICROSOFT@CN,DIRECT",
+    "GEOSITE,PIKPAK,主力",
+    "GEOSITE,GFW,主力",
+    "GEOSITE,CN,DIRECT",
+    "GEOSITE,PRIVATE,DIRECT",
+    "GEOIP,NETFLIX,主力,no-resolve",
+    "GEOIP,TELEGRAM,主力,no-resolve",
+    "GEOIP,CN,DIRECT",
+    "GEOIP,PRIVATE,DIRECT",
+    "DST-PORT,22,主力",
+    "MATCH,主力"
 ];
 
-// -------------------------------------------------------------------------------- //
-// Sniffer Config (保留)
-// -------------------------------------------------------------------------------- //
+// 辅助策略组
+const extraGroups = [
+    {
+        "name": "直连",
+        "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png",
+        "type": "select",
+        "proxies": [
+            "DIRECT", "主力"
+        ]
+    },
+    {
+        "name": "REJECT",
+        "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Reject.png",
+        "type": "select",
+        "proxies": [
+            "REJECT", "DIRECT"
+        ]
+    },
+];
 
 const snifferConfig = {
     "sniff": {
@@ -166,10 +229,7 @@ const snifferConfig = {
     ]
 };
 
-// -------------------------------------------------------------------------------- //
-// DNS Config (保留)
-// -------------------------------------------------------------------------------- //
-
+// RedirHost DNS 配置 (在默认开启 FakeIP 时作为备选)
 const dnsConfig = {
     "enable": true,
     "ipv6": ipv6Enabled,
@@ -198,8 +258,8 @@ const dnsConfig = {
     ]
 };
 
+// FakeIP DNS 配置 (将作为默认配置)
 const dnsConfig2 = {
-    // 提供使用 FakeIP 的 DNS 配置
     "enable": true,
     "ipv6": ipv6Enabled,
     "prefer-h3": true,
@@ -238,10 +298,6 @@ const dnsConfig2 = {
     ]
 };
 
-// -------------------------------------------------------------------------------- //
-// GeoX URL (保留)
-// -------------------------------------------------------------------------------- //
-
 const geoxURL = {
     "geoip": "https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geoip.dat",
     "geosite": "https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat",
@@ -249,230 +305,44 @@ const geoxURL = {
     "asn": "https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/GeoLite2-ASN.mmdb"
 };
 
-// -------------------------------------------------------------------------------- //
-// 核心函数：构建新的代理组
-// -------------------------------------------------------------------------------- //
+const countriesMeta = {
+// ... 地区元数据已省略
+};
 
-function buildProxyGroups() {
-    // 主力节点筛选关键词：ix, bage, cf, jinx, aws(小写), bero, bwh, riddler, yyy, 深港出口, 出口, megabox
-    const mainProxyFilter = "(?i)ix|bage|cf|jinx|aws|bero|bwh|riddler|yyy|深港出口|出口|megabox";
-    
-    // 备用节点排除规则：排除主力节点关键词，从而包含剩余所有节点
-    const standbyProxyExcludeFilter = mainProxyFilter;
 
-    // 新的“选择节点”的候选列表
-    const newSelector = [
-        "主力节点",
-        "备用节点",
-        "中转节点",
-        "落地节点",
-        "链式代理",
-        "手动选择",
-        "DIRECT"
-    ];
-
-    // 新的“故障转移”代理组列表
-    const newFallbackProxies = [
-        "主力节点",
-        "备用节点",
-        "中转节点",
-        "落地节点",
-        "链式代理",
-        "手动选择",
-        "DIRECT"
-    ];
-
-    return [
-        {
-            "name": "选择节点",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png",
-            "type": "select",
-            "proxies": newSelector
-        },
-        {
-            "name": "手动选择",
-            "icon": "https://cdn.jsdelivr.net/gh/shindgewongxj/WHATSINStash@master/icon/select.png",
-            "include-all": true,
-            "type": "select"
-        },
-        // 1. 主力节点
-        {
-            "name": "主力节点",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Premium.png",
-            "type": (loadBalance) ? "load-balance" : "url-test",
-            "include-all": true,
-            "filter": mainProxyFilter, // 匹配主力关键词
-            "url": "https://cp.cloudflare.com/generate_204",
-            "interval": 60,
-            "tolerance": 20,
-            "lazy": false
-        },
-        // 2. 备用节点
-        {
-            "name": "备用节点",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Backup.png",
-            "type": "url-test",
-            "include-all": true,
-            "exclude-filter": standbyProxyExcludeFilter, // 排除主力节点关键词
-            "url": "https://cp.cloudflare.com/generate_204",
-            "interval": 60,
-            "tolerance": 20,
-            "lazy": false
-        },
-        // 3. 链式代理 (包含所有节点)
-        {
-            "name": "链式代理",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Area.png", 
-            "type": "select",
-            "include-all": true,
-        },
-        // 4. 中转节点 (包含所有节点)
-        {
-            "name": "中转节点",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Tunnel.png", 
-            "type": "select",
-            "include-all": true,
-        },
-        // 5. 落地节点 (包含所有节点)
-        {
-            "name": "落地节点",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Airport.png",
-            "type": "select",
-            "include-all": true,
-        },
-        {
-            "name": "故障转移",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bypass.png",
-            "type": "fallback",
-            "url": "https://cp.cloudflare.com/generate_204",
-            "proxies": newFallbackProxies,
-            "interval": 180,
-            "tolerance": 20,
-            "lazy": false
-        },
-        // 以下为功能策略组，全部指向新的 "选择节点"
-        {
-            "name": "静态资源",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Cloudflare.png",
-            "type": "select",
-            "proxies": ["选择节点", "直连"],
-        },
-        {
-            "name": "AI",
-            "icon": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/chatgpt.png",
-            "type": "select",
-            "proxies": ["选择节点", "手动选择"],
-        },
-        {
-            "name": "Telegram",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png",
-            "type": "select",
-            "proxies": newSelector,
-        },
-        {
-            "name": "YouTube",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png",
-            "type": "select",
-            "proxies": newSelector,
-        },
-        {
-            "name": "Bilibili",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/bilibili.png",
-            "type": "select",
-            "proxies": ["直连", "选择节点", "手动选择"]
-        },
-        {
-            "name": "Netflix",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png",
-            "type": "select",
-            "proxies": newSelector,
-        },
-        {
-            "name": "Spotify",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Spotify.png",
-            "type": "select",
-            "proxies": newSelector,
-        },
-        {
-            "name": "TikTok",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png",
-            "type": "select",
-            "proxies": newSelector,
-        },
-        {
-            "name": "E-Hentai",
-            "icon": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/Ehentai.png",
-            "type": "select",
-            "proxies": newSelector,
-        },
-        {
-            "name": "PikPak",
-            "icon": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/PikPak.png",
-            "type": "select",
-            "proxies": newSelector,
-        },
-        {
-            "name": "Truth Social",
-            "icon": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/TruthSocial.png",
-            "type": "select",
-            "proxies": newSelector,
-        },
-        {
-            "name": "Bahamut",
-            "icon": "https://cdn.jsdmirror.com/gh/Koolson/Qure@master/IconSet/Color/Bahamut.png",
-            "type": "select",
-            "proxies": newSelector,
-        },
-        {
-            "name": "Crypto",
-            "icon": "https://cdn.jsdmirror.com/gh/Koolson/Qure@master/IconSet/Color/Cryptocurrency_3.png",
-            "type": "select",
-            "proxies": newSelector,
-        },
-        {
-            "name": "SSH(22端口)",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Server.png",
-            "type": "select",
-            "proxies": newSelector,
-        },
-        {
-            "name": "搜狗输入法",
-            "icon": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/Sougou.png",
-            "type": "select",
-            "proxies": [
-                "直连", "REJECT"
-            ]
-        },
-        {
-            "name": "直连",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png",
-            "type": "select",
-            "proxies": [
-                "DIRECT", "选择节点"
-            ]
-        },
-        {
-            "name": "广告拦截",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png",
-            "type": "select",
-            "proxies": [
-                "REJECT", "直连"
-            ]
-        },
-    ].filter(Boolean);
+function parseBool(value) {
+    if (typeof value === "boolean") return value;
+    if (typeof value === "string") {
+        return value.toLowerCase() === "true" || value === "1";
+    }
+    return false;
 }
 
-// -------------------------------------------------------------------------------- //
-// 主函数 (精简)
-// -------------------------------------------------------------------------------- //
+function hasLowCost(config) {
+    return false;
+}
+function parseCountries(config) {
+    return [];
+}
+function buildBaseLists({ landing, lowCost, countryInfo }) {
+    return { defaultProxies: [], defaultProxiesDirect: [], defaultSelector: [], defaultFallback: [], countryGroupNames: [] };
+}
+function buildCountryProxyGroups(countryList) {
+    return [];
+}
+function buildProxyGroups({ countryList, countryProxyGroups, lowCost, defaultProxies, defaultProxiesDirect, defaultSelector, defaultFallback }) {
+    return [];
+}
+
 
 function main(config) {
     config = { proxies: config.proxies };
     
-    // 生成代理组
-    const proxyGroups = buildProxyGroups();
+    // 1. 合并静态代理组和额外的辅助组
+    const proxyGroups = [...staticProxyGroups, ...extraGroups];
+
+    // 2. 添加 GLOBAL 策略组
     const globalProxies = proxyGroups.map(item => item.name);
-    
     proxyGroups.push(
         {
             "name": "GLOBAL",
@@ -483,6 +353,7 @@ function main(config) {
         }
     );
 
+    // 3. 完整配置参数 (如果 fullConfig 为 true)
     if (fullConfig) Object.assign(config, {
         "mixed-port": 7890,
         "redir-port": 7892,
@@ -503,11 +374,13 @@ function main(config) {
         }
     });
 
+    // 4. 应用最终配置
     Object.assign(config, {
         "proxy-groups": proxyGroups,
         "rule-providers": ruleProviders,
         "rules": rules,
         "sniffer": snifferConfig,
+        // ⚠️ fakeIPEnabled 默认为 true，因此默认使用 dnsConfig2 (FakeIP)
         "dns": fakeIPEnabled ? dnsConfig2 : dnsConfig,
         "geodata-mode": true,
         "geox-url": geoxURL,
