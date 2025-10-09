@@ -52,8 +52,6 @@ const ruleProviders = {
         "url": "https://adrules.top/adrules_domainset.txt", 
         "path": "./ruleset/ADBlock.txt" 
     }, 
-    /* 已删除 TruthSocial */
-    /* 已删除 SogouInput */
     "StaticResources": { 
         "type": "http", 
         "behavior": "domain", 
@@ -86,7 +84,6 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/TikTok.list", 
         "path": "./ruleset/TikTok.list" 
     }, 
-    /* 已删除 EHentai */
     "SteamFix": { 
         "type": "http", 
         "behavior": "classical", 
@@ -119,27 +116,17 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/AdditionalCDNResources.list", 
         "path": "./ruleset/AdditionalCDNResources.list" 
     }, 
-    "Crypto": { 
-        "type": "http", 
-        "behavior": "classical", 
-        "format": "text", 
-        "interval": 86400, 
-        "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/Crypto.list", 
-        "path": "./ruleset/Crypto.list" 
-    } 
+    /* 已删除 Crypto 规则集 */
 } 
 
 const rules = [ 
     "RULE-SET,ADBlock,广告拦截", 
     "RULE-SET,AdditionalFilter,广告拦截", 
-    /* 已删除 SogouInput 规则 */
-    /* 已删除 TruthSocial 规则 */
     "RULE-SET,StaticResources,静态资源", 
     "RULE-SET,CDNResources,静态资源", 
     "RULE-SET,AdditionalCDNResources,静态资源", 
     "RULE-SET,AI,AI", 
-    "RULE-SET,Crypto,Crypto", 
-    /* 已删除 EHentai 规则 */
+    /* 已删除 Crypto 规则 */
     "RULE-SET,TikTok,TikTok", 
     "RULE-SET,SteamFix,直连", 
     "RULE-SET,GoogleFCM,直连", 
@@ -147,11 +134,10 @@ const rules = [
     "GEOSITE,TELEGRAM,Telegram", 
     "GEOSITE,YOUTUBE,YouTube", 
     "GEOSITE,NETFLIX,Netflix", 
-    "GEOSITE,SPOTIFY,Spotify", 
-    "GEOSITE,BAHAMUT,Bahamut", 
+    /* 已删除 Spotify 规则 */
+    /* 已删除 Bahamut 规则 */
     "GEOSITE,BILIBILI,Bilibili", 
     "GEOSITE,MICROSOFT@CN,直连", 
-    /* 已删除 PikPak 规则 */
     "GEOSITE,GFW,选择节点", 
     "GEOSITE,CN,直连", 
     "GEOSITE,PRIVATE,直连", 
@@ -159,7 +145,7 @@ const rules = [
     "GEOIP,TELEGRAM,Telegram,no-resolve", 
     "GEOIP,CN,直连", 
     "GEOIP,PRIVATE,直连", 
-    "DST-PORT,22,SSH(22端口)", 
+    /* 已删除 SSH(22端口) 规则 */
     "MATCH,选择节点" 
 ]; 
 
@@ -374,7 +360,6 @@ function buildProxyGroups({ countryList, countryProxyGroups, lowCost, defaultPro
     // 查看是否有特定地区的节点 
     const hasTW = countryList.includes("台湾"); 
     const hasHK = countryList.includes("香港"); 
-    const hasUS = countryList.includes("美国"); 
     
     // 排除落地节点、选择节点和故障转移以避免死循环 
     const frontProxySelector = [ 
@@ -455,40 +440,16 @@ function buildProxyGroups({ countryList, countryProxyGroups, lowCost, defaultPro
             "type": "select", 
             "proxies": defaultProxies 
         }, 
-        { 
-            "name": "Spotify", 
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Spotify.png", 
-            "type": "select", 
-            "proxies": defaultProxies 
-        }, 
+        /* 已删除 Spotify 代理组 */
         { 
             "name": "TikTok", 
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png", 
             "type": "select", 
             "proxies": defaultProxies 
         }, 
-        /* 已删除 E-Hentai 代理组 */
-        /* 已删除 PikPak 代理组 */
-        /* 已删除 Truth Social 代理组 */
-        { 
-            "name": "Bahamut", 
-            "icon": "https://cdn.jsdmirror.com/gh/Koolson/Qure@master/IconSet/Color/Bahamut.png", 
-            "type": "select", 
-            "proxies": (hasTW) ? ["台湾节点", "选择节点", "手动选择", "直连"] : defaultProxies 
-        }, 
-        { 
-            "name": "Crypto", 
-            "icon": "https://cdn.jsdmirror.com/gh/Koolson/Qure@master/IconSet/Color/Cryptocurrency_3.png", 
-            "type": "select", 
-            "proxies": defaultProxies 
-        }, 
-        { 
-            "name": "SSH(22端口)", 
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Server.png", 
-            "type": "select", 
-            "proxies": defaultProxies 
-        }, 
-        /* 已删除 搜狗输入法 代理组 */
+        /* 已删除 Bahamut 代理组 */
+        /* 已删除 Crypto 代理组 */
+        /* 已删除 SSH(22端口) 代理组 */
         { 
             "name": "直连", 
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png", 
