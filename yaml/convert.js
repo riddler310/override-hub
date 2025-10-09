@@ -216,4 +216,103 @@ function buildProxyGroups() {
         {
             "name": "链式代理",
             "type": "relay",
-            "icon": "
+            "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png",
+            "proxies": [
+                "中转节点",
+                "落地节点"
+            ]
+        },
+        // 4. 中转节点组 (Select)
+        {
+            "name": "中转节点",
+            "type": "select",
+            "include-all": true,
+            "filter": ".*", // 匹配所有节点
+            "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Domestic.png",
+            "proxies": [
+                "DIRECT"
+            ]
+        },
+        // 5. 落地节点组 (Select)
+        {
+            "name": "落地节点",
+            "type": "select",
+            "include-all": true,
+            "filter": ".*", // 匹配所有节点
+            "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png",
+            "proxies": [
+                "DIRECT"
+            ]
+        },
+        // 6. 广告拦截 (REJECT/直连)
+        {
+            "name": "广告拦截",
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png",
+            "type": "select",
+            "proxies": [
+                "REJECT", "直连"
+            ]
+        },
+        // 7. 直连 (DIRECT)
+        {
+            "name": "直连",
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png",
+            "type": "select",
+            "proxies": [
+                "DIRECT", "主力"
+            ]
+        },
+    ].filter(Boolean);
+}
+
+function main(config) {
+    config = { proxies: config.proxies };
+    
+    // 禁用所有动态分析，直接调用构建函数
+    const proxyGroups = buildProxyGroups();
+    const globalProxies = proxyGroups.map(item => item.name);
+    
+    // 确保 GLOBAL 组包含所有新的代理组
+    proxyGroups.push(
+        {
+            "name": "GLOBAL",
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png",
+            "include-all": true,
+            "type": "select",
+            "proxies": globalProxies
+        }
+    );
+
+    if (fullConfig) Object.assign(config, {
+        "mixed-port": 7890,
+        "redir-port": 7892,
+        "tproxy-port": 7893,
+        "routing-mark": 7894,
+        "allow-lan": true,
+        "ipv6": ipv6Enabled,
+        "mode": "rule",
+        "unified-delay": true,
+        "tcp-concurrent": true,
+        "find-process-mode": "off",
+        "log-level": "info",
+        "geodata-loader": "standard",
+        "external-controller": ":9999",
+        "disable-keep-alive": !keepAliveEnabled,
+        "profile": {
+            "store-selected": true,
+        }
+    });
+
+    Object.assign(config, {
+        "proxy-groups": proxyGroups,
+        "rule-providers": ruleProviders,
+        "rules": rules,
+        "sniffer": snifferConfig,
+        // 根据 fakeIPEnabled 变量选择 DNS 配置。由于 fakeIPEnabled 默认已改为 true，将默认使用 dnsConfig2 (FakeIP)
+        "dns": fakeIPEnabled ? dnsConfig2 : dnsConfig,
+        "geodata-mode": true,
+        "geox-url": geoxURL,
+    });
+
+    return config;
+}
