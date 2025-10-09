@@ -1,134 +1,38 @@
 /*
-powerfullz 的 Substore 订阅转换脚本
+powerfullz 的 Substore 订阅转换脚本 - 采用主力/备用/链式代理结构
 https://github.com/powerfullz/override-rules
 传入参数：
 - loadbalance: 启用负载均衡 (默认false)
-- landing: 启用落地节点功能 (默认false)
-- ipv6: 启用 IPv6 支持 (默认false -> 默认 true)
+- landing: 启用落地节点功能 (默认false) - 注意：此配置中 landing 参数已失效，落地节点将始终包含所有节点。
+- ipv6: 启用 IPv6 支持 (默认false)
 - full: 启用完整配置，用于纯内核启动 (默认false)
 - keepalive: 启用 tcp-keep-alive (默认false)
-- fakeip: DNS 使用 FakeIP 而不是 RedirHost (默认false -> 默认 true)
+- fakeip: DNS 使用 FakeIP 而不是 RedirHost (默认false)
 */
 
 const inArg = typeof $arguments !== 'undefined' ? $arguments : {};
 const loadBalance = parseBool(inArg.loadbalance) || false,
+    // landing 参数逻辑在此配置中已失效，保留仅为兼容原参数
     landing = parseBool(inArg.landing) || false,
-    // ⚠️ 默认开启 IPv6
-    ipv6Enabled = parseBool(inArg.ipv6) || true,
+    ipv6Enabled = parseBool(inArg.ipv6) || false,
     fullConfig = parseBool(inArg.full) || false,
     keepAliveEnabled = parseBool(inArg.keepalive) || false,
-    // ⚠️ 默认开启 FakeIP
-    fakeIPEnabled = parseBool(inArg.fakeip) || true;
+    fakeIPEnabled = parseBool(inArg.fakeip) || false;
 
-// 原始脚本中与动态代理组生成相关的函数已删除或留空。
-
-// ⚠️ 替换后的静态代理组配置
-const staticProxyGroups = [
-    {
-        "name": "主力",
-        "type": "select",
-        "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png",
-        "include-all": true,
-        // 匹配规则：ix、bage、cf、jinx、aws(小写)、bero、bwh、riddler、yyy、深港出口、出口
-        "filter": "(?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox)|(?-i)aws",
-        "proxies": [
-            "链式代理",
-            "落地节点",
-            "备用",
-            "DIRECT"
-        ]
-    },
-    {
-        "name": "备用",
-        "type": "url-test",
-        "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png",
-        "include-all": true,
-        // 匹配非主力节点
-        "filter": "^(?!.*((?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口)|(?-i)aws)).*",
-        "url": "http://www.gstatic.com/generate_204",
-        "interval": 300,
-        "tolerance": 50
-    },
-    // ===== 链式代理部分 =====
-    {
-        "name": "链式代理",
-        "type": "relay",
-        "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png",
-        "proxies": [
-            "中转节点",
-            "落地节点"
-        ]
-    },
-    {
-        "name": "中转节点",
-        "type": "select",
-        "include-all": true,
-        // 匹配主力 + 备用所有节点
-        "filter": ".*",
-        "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Domestic.png",
-        "proxies": [
-            "DIRECT"
-        ]
-    },
-    {
-        "name": "落地节点",
-        "type": "select",
-        "include-all": true,
-        // 匹配除主力节点和备用节点的节点
-        "filter": ".*",
-        "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png",
-        "proxies": [
-            "DIRECT"
-        ]
-    }
-];
+// 定义主力节点的匹配正则表达式
+const mainProxyFilter = "(?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox)|(?-i)aws";
+// 定义备用节点的排除正则表达式 (非主力节点)
+const fallbackProxyExcludeFilter = `^(?!.*(${mainProxyFilter})).*`;
 
 
+// 移除 buildBaseLists 函数，不再需要动态构建基础列表
+
+// 精简后的 ruleProviders (保持不变)
 const ruleProviders = {
     "ADBlock": {
         "type": "http", "behavior": "domain", "format": "text", "interval": 86400,
         "url": "https://adrules.top/adrules_domainset.txt",
         "path": "./ruleset/ADBlock.txt"
-    },
-    "TruthSocial": {
-        "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/TruthSocial.list",
-        "path": "./ruleset/TruthSocial.list",
-        "behavior": "classical", "interval": 86400, "format": "text", "type": "http"
-    },
-    "SogouInput": {
-        "type": "http", "behavior": "classical", "format": "text", "interval": 86400,
-        "url": "https://ruleset.skk.moe/Clash/non_ip/sogouinput.txt",
-        "path": "./ruleset/SogouInput.txt"
-    },
-    "StaticResources": {
-        "type": "http", "behavior": "domain", "format": "text", "interval": 86400,
-        "url": "https://ruleset.skk.moe/Clash/domainset/cdn.txt",
-        "path": "./ruleset/StaticResources.txt"
-    },
-    "CDNResources": {
-        "type": "http", "behavior": "classical", "format": "text", "interval": 86400,
-        "url": "https://ruleset.skk.moe/Clash/non_ip/cdn.txt",
-        "path": "./ruleset/CDNResources.txt"
-    },
-    "AI": {
-        "type": "http", "behavior": "classical", "format": "text", "interval": 86400,
-        "url": "https://ruleset.skk.moe/Clash/non_ip/ai.txt",
-        "path": "./ruleset/AI.txt"
-    },
-    "TikTok": {
-        "type": "http", "behavior": "classical", "format": "text", "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/TikTok.list",
-        "path": "./ruleset/TikTok.list"
-    },
-    "EHentai": {
-        "type": "http", "behavior": "classical", "format": "text", "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/EHentai.list",
-        "path": "./ruleset/EHentai.list"
-    },
-    "SteamFix": {
-        "type": "http", "behavior": "classical", "format": "text", "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/SteamFix.list",
-        "path": "./ruleset/SteamFix.list"
     },
     "GoogleFCM": {
         "type": "http", "behavior": "classical", "interval": 86400, "format": "text",
@@ -140,71 +44,21 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/AdditionalFilter.list",
         "path": "./ruleset/AdditionalFilter.list"
     },
-    "AdditionalCDNResources": {
-        "type": "http", "behavior": "classical", "format": "text", "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/AdditionalCDNResources.list",
-        "path": "./ruleset/AdditionalCDNResources.list"
-    },
-    "Crypto": {
-        "type": "http", "behavior": "classical", "format": "text", "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/Crypto.list",
-        "path": "./ruleset/Crypto.list"
-    }
 }
 
-// 规则已调整为指向新的策略组，如 "主力"
+// 更新 rules: 将原来的 '选择节点' 替换为 '主力'
 const rules = [
-    "RULE-SET,ADBlock,REJECT",
-    "RULE-SET,AdditionalFilter,REJECT",
-    "RULE-SET,SogouInput,直连",
-    "RULE-SET,TruthSocial,主力",
-    "RULE-SET,StaticResources,主力",
-    "RULE-SET,CDNResources,主力",
-    "RULE-SET,AdditionalCDNResources,主力",
-    "RULE-SET,AI,主力",
-    "RULE-SET,Crypto,主力",
-    "RULE-SET,EHentai,主力",
-    "RULE-SET,TikTok,主力",
-    "RULE-SET,SteamFix,DIRECT",
-    "RULE-SET,GoogleFCM,DIRECT",
-    "GEOSITE,GOOGLE-PLAY@CN,DIRECT",
-    "GEOSITE,TELEGRAM,主力",
-    "GEOSITE,YOUTUBE,主力",
-    "GEOSITE,NETFLIX,主力",
-    "GEOSITE,SPOTIFY,主力",
-    "GEOSITE,BAHAMUT,主力",
-    "GEOSITE,BILIBILI,主力",
-    "GEOSITE,MICROSOFT@CN,DIRECT",
-    "GEOSITE,PIKPAK,主力",
-    "GEOSITE,GFW,主力",
-    "GEOSITE,CN,DIRECT",
-    "GEOSITE,PRIVATE,DIRECT",
-    "GEOIP,NETFLIX,主力,no-resolve",
-    "GEOIP,TELEGRAM,主力,no-resolve",
-    "GEOIP,CN,DIRECT",
-    "GEOIP,PRIVATE,DIRECT",
-    "DST-PORT,22,主力",
-    "MATCH,主力"
-];
-
-// 辅助策略组
-const extraGroups = [
-    {
-        "name": "直连",
-        "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png",
-        "type": "select",
-        "proxies": [
-            "DIRECT", "主力"
-        ]
-    },
-    {
-        "name": "REJECT",
-        "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Reject.png",
-        "type": "select",
-        "proxies": [
-            "REJECT", "DIRECT"
-        ]
-    },
+    "RULE-SET,ADBlock,广告拦截",
+    "RULE-SET,AdditionalFilter,广告拦截",
+    "RULE-SET,GoogleFCM,直连",
+    "GEOSITE,GOOGLE-PLAY@CN,直连",
+    "GEOSITE,MICROSOFT@CN,直连",
+    "GEOSITE,GFW,主力", // 原来的 '选择节点' 替换为 '主力'
+    "GEOSITE,CN,直连",
+    "GEOSITE,PRIVATE,直连",
+    "GEOIP,CN,直连",
+    "GEOIP,PRIVATE,直连",
+    "MATCH,主力" // 原来的 '选择节点' 替换为 '主力'
 ];
 
 const snifferConfig = {
@@ -229,7 +83,6 @@ const snifferConfig = {
     ]
 };
 
-// RedirHost DNS 配置 (在默认开启 FakeIP 时作为备选)
 const dnsConfig = {
     "enable": true,
     "ipv6": ipv6Enabled,
@@ -258,8 +111,8 @@ const dnsConfig = {
     ]
 };
 
-// FakeIP DNS 配置 (将作为默认配置)
 const dnsConfig2 = {
+    // 提供使用 FakeIP 的 DNS 配置
     "enable": true,
     "ipv6": ipv6Enabled,
     "prefer-h3": true,
@@ -305,10 +158,8 @@ const geoxURL = {
     "asn": "https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/GeoLite2-ASN.mmdb"
 };
 
-const countriesMeta = {
-// ... 地区元数据已省略
-};
-
+// 地区元数据，已不再使用
+const countriesMeta = {};
 
 function parseBool(value) {
     if (typeof value === "boolean") return value;
@@ -319,30 +170,104 @@ function parseBool(value) {
 }
 
 function hasLowCost(config) {
+    // 低倍率节点逻辑已在此配置中被移除，此函数仅为兼容而保留，返回 false
     return false;
 }
-function parseCountries(config) {
-    return [];
-}
-function buildBaseLists({ landing, lowCost, countryInfo }) {
-    return { defaultProxies: [], defaultProxiesDirect: [], defaultSelector: [], defaultFallback: [], countryGroupNames: [] };
-}
-function buildCountryProxyGroups(countryList) {
-    return [];
-}
-function buildProxyGroups({ countryList, countryProxyGroups, lowCost, defaultProxies, defaultProxiesDirect, defaultSelector, defaultFallback }) {
-    return [];
-}
 
+// 地区分析和地区组构建函数已移除或修改为返回空值
+function parseCountries(config) { return []; }
+function buildCountryProxyGroups(countryList) { return []; }
+
+
+// 重新构建代理组
+function buildProxyGroups() {
+    return [
+        // 1. 主力组 (Main / Select)
+        {
+            "name": "主力",
+            "type": "select",
+            "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png",
+            "include-all": true,
+            "filter": mainProxyFilter,
+            "proxies": [
+                "链式代理",
+                "落地节点",
+                "备用",
+                "DIRECT"
+            ]
+        },
+        // 2. 备用组 (Fallback / URL-Test)
+        {
+            "name": "备用",
+            "type": loadBalance ? "load-balance" : "url-test", // 根据参数使用 url-test 或 load-balance
+            "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png",
+            "include-all": true,
+            "exclude-filter": mainProxyFilter, // 排除主力节点
+            "url": "http://www.gstatic.com/generate_204",
+            "interval": 300,
+            "tolerance": 50
+        },
+        // 3. 链式代理组 (Relay)
+        {
+            "name": "链式代理",
+            "type": "relay",
+            "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png",
+            "proxies": [
+                "中转节点",
+                "落地节点"
+            ]
+        },
+        // 4. 中转节点组 (Select)
+        {
+            "name": "中转节点",
+            "type": "select",
+            "include-all": true,
+            "filter": ".*", // 匹配所有节点
+            "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Domestic.png",
+            "proxies": [
+                "DIRECT"
+            ]
+        },
+        // 5. 落地节点组 (Select)
+        {
+            "name": "落地节点",
+            "type": "select",
+            "include-all": true,
+            "filter": ".*", // 匹配所有节点
+            "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png",
+            "proxies": [
+                "DIRECT"
+            ]
+        },
+        // 6. 广告拦截 (REJECT/直连)
+        {
+            "name": "广告拦截",
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png",
+            "type": "select",
+            "proxies": [
+                "REJECT", "直连"
+            ]
+        },
+        // 7. 直连 (DIRECT)
+        {
+            "name": "直连",
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png",
+            "type": "select",
+            "proxies": [
+                "DIRECT", "主力"
+            ]
+        },
+    ].filter(Boolean);
+}
 
 function main(config) {
     config = { proxies: config.proxies };
     
-    // 1. 合并静态代理组和额外的辅助组
-    const proxyGroups = [...staticProxyGroups, ...extraGroups];
-
-    // 2. 添加 GLOBAL 策略组
+    // 禁用所有动态分析，直接调用构建函数
+    const proxyGroups = buildProxyGroups();
     const globalProxies = proxyGroups.map(item => item.name);
+    
+    // 确保 GLOBAL 组包含所有新的代理组
     proxyGroups.push(
         {
             "name": "GLOBAL",
@@ -353,7 +278,6 @@ function main(config) {
         }
     );
 
-    // 3. 完整配置参数 (如果 fullConfig 为 true)
     if (fullConfig) Object.assign(config, {
         "mixed-port": 7890,
         "redir-port": 7892,
@@ -374,13 +298,11 @@ function main(config) {
         }
     });
 
-    // 4. 应用最终配置
     Object.assign(config, {
         "proxy-groups": proxyGroups,
         "rule-providers": ruleProviders,
         "rules": rules,
         "sniffer": snifferConfig,
-        // ⚠️ fakeIPEnabled 默认为 true，因此默认使用 dnsConfig2 (FakeIP)
         "dns": fakeIPEnabled ? dnsConfig2 : dnsConfig,
         "geodata-mode": true,
         "geox-url": geoxURL,
