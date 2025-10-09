@@ -3,29 +3,32 @@ powerfullz 的 Substore 订阅转换脚本 - 采用主力/备用/链式代理结
 https://github.com/powerfullz/override-rules
 传入参数：
 - loadbalance: 启用负载均衡 (默认false)
-- landing: 启用落地节点功能 (默认false) - 注意：此配置中 landing 参数已失效，落地节点将始终包含所有节点。
-- ipv6: 启用 IPv6 支持 (默认false)
+- landing: 启用落地节点功能 (默认false)
+- ipv6: 启用 IPv6 支持 (默认true)  <-- 默认已修改
 - full: 启用完整配置，用于纯内核启动 (默认false)
 - keepalive: 启用 tcp-keep-alive (默认false)
-- fakeip: DNS 使用 FakeIP 而不是 RedirHost (默认false)
+- fakeip: DNS 使用 FakeIP 而不是 RedirHost (默认true)  <-- 默认已修改
 */
 
 const inArg = typeof $arguments !== 'undefined' ? $arguments : {};
+
+// 修改默认值：ipv6Enabled 默认 true
+const ipv6EnabledDefault = true;
+// 修改默认值：fakeIPEnabled 默认 true
+const fakeIPEnabledDefault = true;
+
 const loadBalance = parseBool(inArg.loadbalance) || false,
-    // landing 参数逻辑在此配置中已失效，保留仅为兼容原参数
     landing = parseBool(inArg.landing) || false,
-    ipv6Enabled = parseBool(inArg.ipv6) || false,
+    ipv6Enabled = parseBool(inArg.ipv6) || ipv6EnabledDefault, // 默认改为 true
     fullConfig = parseBool(inArg.full) || false,
     keepAliveEnabled = parseBool(inArg.keepalive) || false,
-    fakeIPEnabled = parseBool(inArg.fakeip) || false;
+    fakeIPEnabled = parseBool(inArg.fakeip) || fakeIPEnabledDefault; // 默认改为 true
 
 // 定义主力节点的匹配正则表达式
 const mainProxyFilter = "(?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox)|(?-i)aws";
 // 定义备用节点的排除正则表达式 (非主力节点)
-const fallbackProxyExcludeFilter = `^(?!.*(${mainProxyFilter})).*`;
+// const fallbackProxyExcludeFilter = `^(?!.*(${mainProxyFilter})).*`; // 此变量未被使用，故删除
 
-
-// 移除 buildBaseLists 函数，不再需要动态构建基础列表
 
 // 精简后的 ruleProviders (保持不变)
 const ruleProviders = {
@@ -46,19 +49,19 @@ const ruleProviders = {
     },
 }
 
-// 更新 rules: 将原来的 '选择节点' 替换为 '主力'
+// 更新 rules: 将原来的 '选择节点' 替换为 '主力' (保持不变)
 const rules = [
     "RULE-SET,ADBlock,广告拦截",
     "RULE-SET,AdditionalFilter,广告拦截",
     "RULE-SET,GoogleFCM,直连",
     "GEOSITE,GOOGLE-PLAY@CN,直连",
     "GEOSITE,MICROSOFT@CN,直连",
-    "GEOSITE,GFW,主力", // 原来的 '选择节点' 替换为 '主力'
+    "GEOSITE,GFW,主力",
     "GEOSITE,CN,直连",
     "GEOSITE,PRIVATE,直连",
     "GEOIP,CN,直连",
     "GEOIP,PRIVATE,直连",
-    "MATCH,主力" // 原来的 '选择节点' 替换为 '主力'
+    "MATCH,主力"
 ];
 
 const snifferConfig = {
@@ -83,9 +86,10 @@ const snifferConfig = {
     ]
 };
 
+// RedirHost DNS 配置 (未修改)
 const dnsConfig = {
     "enable": true,
-    "ipv6": ipv6Enabled,
+    "ipv6": ipv6Enabled, // 使用参数值，如果未传入，则为 true
     "prefer-h3": true,
     "enhanced-mode": "redir-host",
     "default-nameserver": [
@@ -111,10 +115,11 @@ const dnsConfig = {
     ]
 };
 
+// FakeIP DNS 配置 (未修改)
 const dnsConfig2 = {
     // 提供使用 FakeIP 的 DNS 配置
     "enable": true,
-    "ipv6": ipv6Enabled,
+    "ipv6": ipv6Enabled, // 使用参数值，如果未传入，则为 true
     "prefer-h3": true,
     "enhanced-mode": "fake-ip",
     "fake-ip-filter": [
@@ -179,7 +184,7 @@ function parseCountries(config) { return []; }
 function buildCountryProxyGroups(countryList) { return []; }
 
 
-// 重新构建代理组
+// 代理组构建 (保持不变)
 function buildProxyGroups() {
     return [
         // 1. 主力组 (Main / Select)
@@ -199,7 +204,7 @@ function buildProxyGroups() {
         // 2. 备用组 (Fallback / URL-Test)
         {
             "name": "备用",
-            "type": loadBalance ? "load-balance" : "url-test", // 根据参数使用 url-test 或 load-balance
+            "type": loadBalance ? "load-balance" : "url-test", // 根据 loadbalance 参数使用 url-test 或 load-balance
             "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png",
             "include-all": true,
             "exclude-filter": mainProxyFilter, // 排除主力节点
@@ -211,102 +216,4 @@ function buildProxyGroups() {
         {
             "name": "链式代理",
             "type": "relay",
-            "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png",
-            "proxies": [
-                "中转节点",
-                "落地节点"
-            ]
-        },
-        // 4. 中转节点组 (Select)
-        {
-            "name": "中转节点",
-            "type": "select",
-            "include-all": true,
-            "filter": ".*", // 匹配所有节点
-            "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Domestic.png",
-            "proxies": [
-                "DIRECT"
-            ]
-        },
-        // 5. 落地节点组 (Select)
-        {
-            "name": "落地节点",
-            "type": "select",
-            "include-all": true,
-            "filter": ".*", // 匹配所有节点
-            "icon": "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png",
-            "proxies": [
-                "DIRECT"
-            ]
-        },
-        // 6. 广告拦截 (REJECT/直连)
-        {
-            "name": "广告拦截",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png",
-            "type": "select",
-            "proxies": [
-                "REJECT", "直连"
-            ]
-        },
-        // 7. 直连 (DIRECT)
-        {
-            "name": "直连",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png",
-            "type": "select",
-            "proxies": [
-                "DIRECT", "主力"
-            ]
-        },
-    ].filter(Boolean);
-}
-
-function main(config) {
-    config = { proxies: config.proxies };
-    
-    // 禁用所有动态分析，直接调用构建函数
-    const proxyGroups = buildProxyGroups();
-    const globalProxies = proxyGroups.map(item => item.name);
-    
-    // 确保 GLOBAL 组包含所有新的代理组
-    proxyGroups.push(
-        {
-            "name": "GLOBAL",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png",
-            "include-all": true,
-            "type": "select",
-            "proxies": globalProxies
-        }
-    );
-
-    if (fullConfig) Object.assign(config, {
-        "mixed-port": 7890,
-        "redir-port": 7892,
-        "tproxy-port": 7893,
-        "routing-mark": 7894,
-        "allow-lan": true,
-        "ipv6": ipv6Enabled,
-        "mode": "rule",
-        "unified-delay": true,
-        "tcp-concurrent": true,
-        "find-process-mode": "off",
-        "log-level": "info",
-        "geodata-loader": "standard",
-        "external-controller": ":9999",
-        "disable-keep-alive": !keepAliveEnabled,
-        "profile": {
-            "store-selected": true,
-        }
-    });
-
-    Object.assign(config, {
-        "proxy-groups": proxyGroups,
-        "rule-providers": ruleProviders,
-        "rules": rules,
-        "sniffer": snifferConfig,
-        "dns": fakeIPEnabled ? dnsConfig2 : dnsConfig,
-        "geodata-mode": true,
-        "geox-url": geoxURL,
-    });
-
-    return config;
-}
+            "icon": "
