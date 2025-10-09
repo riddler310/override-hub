@@ -32,7 +32,7 @@ proxy-groups:
   # ===== 链式代理部分 =====
   - name: 链式代理
     type: relay
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Chain.png
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png
     proxies:
       - 中转节点
       - 落地节点
@@ -106,3 +106,4 @@ rules:
   - "RULE-SET,ChinaCompanyIp,DIRECT"
   - "GEOIP,CN,DIRECT"
   - "MATCH,主力"
+
