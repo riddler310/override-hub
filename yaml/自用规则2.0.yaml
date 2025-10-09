@@ -12,7 +12,7 @@ proxy-groups:
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
     include-all: true
     # 匹配规则：ix、bage、cf、jinx、aws(小写)、bero、bwh、riddler、yyy、深港出口、出口
-    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口)|(?-i)aws
+    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox)|(?-i)aws
     proxies:
       - 链式代理
       - 落地节点
@@ -106,4 +106,5 @@ rules:
   - "RULE-SET,ChinaCompanyIp,DIRECT"
   - "GEOIP,CN,DIRECT"
   - "MATCH,主力"
+
 
