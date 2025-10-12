@@ -56,6 +56,7 @@ const rules = [
     "RULE-SET,GoogleFCM,直连",
     "GEOSITE,GOOGLE-PLAY@CN,直连",
     "GEOSITE,MICROSOFT@CN,直连",
+    "DOMAIN,a-vrv.akamaized.net,备用",
     "GEOSITE,GFW,主力",
     "GEOSITE,CN,直连",
     "GEOSITE,PRIVATE,直连",
