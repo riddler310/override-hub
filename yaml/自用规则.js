@@ -25,7 +25,7 @@ const loadBalance = parseBool(inArg.loadbalance) || false,
     fakeIPEnabled = parseBool(inArg.fakeip) || fakeIPEnabledDefault; // 默认改为 true
 
 // 定义主力节点的匹配正则表达式
-const mainProxyFilter = "(?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet)|(?-i)aws";
+const mainProxyFilter = "(?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl)|(?-i)aws";
 // 定义备用节点的排除正则表达式 (非主力节点)
 // const fallbackProxyExcludeFilter = `^(?!.*(${mainProxyFilter})).*`; // 此变量未被使用，故删除
 
