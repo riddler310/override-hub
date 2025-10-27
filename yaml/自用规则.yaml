@@ -4,7 +4,7 @@ proxy-groups:
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
     type: select
     include-all: true
-    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|aws|深港|IEPL|CNFaster|Renet|Karvl)(?-i)aws
+    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|aws|深港|IEPL|CNFaster|Renet|Karvl)|(?-i)aws
     proxies:
       - 备用
       - 链式代理
@@ -32,7 +32,7 @@ proxy-groups:
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Domestic.png
     type: select
     include-all: true
-    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|aws|深港|IEPL|CNFaster|Renet|Karvl)(?-i)aws
+    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|aws|深港|IEPL|CNFaster|Renet|Karvl)|(?-i)aws
 
 
  # === 落地节点==
@@ -124,3 +124,4 @@ rules:
   - "RULE-SET,ChinaDomain,DIRECT"
   - "GEOIP,CN,DIRECT"
   - "MATCH,主力"
+
