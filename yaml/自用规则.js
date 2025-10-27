@@ -214,6 +214,7 @@ function buildProxyGroups() {
         },
         {
             "name": "AI",
+            "type": "select",
             "icon": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/chatgpt.png",
             "include-all": true,
         },
