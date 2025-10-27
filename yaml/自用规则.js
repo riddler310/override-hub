@@ -57,6 +57,7 @@ const rules = [
     "GEOSITE,GOOGLE-PLAY@CN,直连",
     "GEOSITE,MICROSOFT@CN,直连",
     "GEOSITE,GFW,主力",
+    "GEOSITE,CATEGORY-AI-!CN,AI",
     "GEOSITE,CN,直连",
     "GEOSITE,PRIVATE,直连",
     "GEOIP,CN,直连",
@@ -211,6 +212,12 @@ function buildProxyGroups() {
             "url": "http://www.gstatic.com/generate_204",
             "interval": 300,
             "tolerance": 50
+        },
+        {
+            "name": "AI",
+            "icon": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/chatgpt.png",
+            "type": "select",
+            "proxies": defaultProxies
         },
         // 3. 链式代理组 (Relay)
         {
