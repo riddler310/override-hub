@@ -197,7 +197,6 @@ function buildProxyGroups() {
             "filter": mainProxyFilter,
             "proxies": [
                 "链式代理",
-                "落地节点",
                 "备用",
                 "DIRECT"
             ]
@@ -216,8 +215,7 @@ function buildProxyGroups() {
         {
             "name": "AI",
             "icon": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/chatgpt.png",
-            "type": "select",
-            "proxies": defaultProxies
+            "include-all": true,
         },
         // 3. 链式代理组 (Relay)
         {
