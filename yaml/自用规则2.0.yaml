@@ -120,6 +120,7 @@ rules:
   - "RULE-SET,BanAD,广告拦截"
   - "RULE-SET,Microsoft,微软服务"
   - "RULE-SET,OpenAi,OpenAi"
+  - "GEOSITE,category-ai-chat-!cn,OpenAi"
   - "RULE-SET,YouTube,油管视频"
   - "RULE-SET,ChinaDomain,DIRECT"
   - "GEOIP,CN,DIRECT"
