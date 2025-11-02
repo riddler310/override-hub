@@ -63,6 +63,12 @@ proxy-groups:
     include-all: true
     filter: .*
 
+  - name: Netflix
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
+    type: select
+    include-all: true
+    filter: .*
+
   - name: 油管视频
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
     type: select
@@ -128,6 +134,7 @@ rules:
   - "RULE-SET,Microsoft,微软服务"
   - "RULE-SET,OpenAi,OpenAi"
   - "GEOSITE,category-ai-chat-!cn,OpenAi"
+  - "RULE-SET,Netflix,Netflix"
   - "RULE-SET,YouTube,油管视频"
   - "RULE-SET,ChinaDomain,DIRECT"
   - "GEOIP,CN,DIRECT"
