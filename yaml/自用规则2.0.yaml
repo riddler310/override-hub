@@ -51,12 +51,6 @@ proxy-groups:
  
 
   # === 功能型分组 ===
-  - name: 微软服务
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Microsoft.png
-    type: select
-    include-all: true
-    filter: .*
-
   - name: OpenAi
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png
     type: select
@@ -87,13 +81,6 @@ rule-providers:
   BanAD:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/BanAD.list
     path: ./ruleset/BanAD.list
-    behavior: classical
-    interval: 86400
-    format: text
-    type: http
-  Microsoft:
-    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Microsoft.list
-    path: ./ruleset/Microsoft.list
     behavior: classical
     interval: 86400
     format: text
@@ -138,7 +125,6 @@ rule-providers:
 rules:
   - "RULE-SET,LocalAreaNetwork,DIRECT"
   - "RULE-SET,BanAD,广告拦截"
-  - "RULE-SET,Microsoft,微软服务"
   - "RULE-SET,OpenAi,OpenAi"
   - "GEOSITE,category-ai-chat-!cn,OpenAi"
   - "RULE-SET,Netflix,Netflix"
