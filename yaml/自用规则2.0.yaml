@@ -4,9 +4,8 @@ geo-update-interval: 24
 geox-url:
   geoip: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat
   geosite: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat
-  
+
 proxy-groups:
-  # === 主力节点（关键词匹配 + 包含备用组）===
   - name: 主力
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
     type: select
@@ -16,7 +15,6 @@ proxy-groups:
       - 备用
       - 链式代理
 
-  # === 备用节点（排除主力节点）===
   - name: 备用
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
     type: url-test
@@ -26,7 +24,6 @@ proxy-groups:
     tolerance: 50
     lazy: true
 
-# === 链式代理（排除主力节点）===
   - name: 链式代理
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png
     type: relay
@@ -34,24 +31,20 @@ proxy-groups:
       - 中转节点
       - 落地节点
 
- # === 中转节点===
   - name: 中转节点
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Domestic.png
     type: select
     include-all: true
     filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter)|(?-i)aws
 
-
- # === 落地节点==
   - name: 落地节点
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png
     type: select
     include-all: true
     filter: .*
- 
 
-  # === 功能型分组 ===
-  - name: OpenAi
+  # === AI 分组（原 OpenAi ）===
+  - name: AI
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png
     type: select
     include-all: true
@@ -79,6 +72,7 @@ proxy-groups:
       - DIRECT
 
 
+
 rule-providers:
   BanAD:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/BanAD.list
@@ -87,13 +81,16 @@ rule-providers:
     interval: 86400
     format: text
     type: http
-  OpenAi:
+
+  # 将 OpenAi 更名为 AI
+  AI:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/OpenAi.list
-    path: ./ruleset/OpenAi.list
+    path: ./ruleset/AI.list
     behavior: classical
     interval: 86400
     format: text
     type: http
+
   Netflix:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Netflix.list
     path: ./ruleset/Netflix.list
@@ -101,6 +98,7 @@ rule-providers:
     interval: 86400
     format: text
     type: http
+
   YouTube:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/YouTube.list
     path: ./ruleset/YouTube.list
@@ -108,6 +106,7 @@ rule-providers:
     interval: 86400
     format: text
     type: http
+
   LocalAreaNetwork:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/LocalAreaNetwork.list
     path: ./ruleset/LocalAreaNetwork.list
@@ -115,6 +114,7 @@ rule-providers:
     interval: 86400
     format: text
     type: http
+
   ChinaDomain:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ChinaDomain.list
     path: ./ruleset/ChinaDomain.list
@@ -124,23 +124,93 @@ rule-providers:
     type: http
 
 
+
 rules:
-  - "RULE-SET,LocalAreaNetwork,DIRECT"
-  - "RULE-SET,BanAD,广告拦截"
-  - "RULE-SET,OpenAi,OpenAi"
-  - "GEOSITE,category-ai-chat-!cn,OpenAi"
-  - "RULE-SET,Netflix,Netflix"
-  - "RULE-SET,YouTube,油管视频"
-  - "RULE-SET,ChinaDomain,DIRECT"
-  - "GEOIP,CN,DIRECT"
-    # === Steam 直连规则（放在 MATCH 之前，优先生效） ===
-  - "PROCESS-NAME,steam.exe,DIRECT"
-  - "PROCESS-NAME,steamwebhelper.exe,DIRECT"
-  - "DOMAIN-SUFFIX,steampowered.com,DIRECT"
-  - "DOMAIN-SUFFIX,store.steampowered.com,DIRECT"
-  - "DOMAIN-SUFFIX,steamcommunity.com,DIRECT"
-  - "DOMAIN-SUFFIX,steamcontent.com,DIRECT"
-  - "DOMAIN-SUFFIX,steamstatic.com,DIRECT"
-  - "DOMAIN-KEYWORD,steamcdn,DIRECT"
-  - "DOMAIN-KEYWORD,steam,DIRECT"
-  - "MATCH,主力"
+  - RULE-SET,LocalAreaNetwork,DIRECT
+
+  - RULE-SET,BanAD,广告拦截
+
+  # OpenAi → AI
+  - RULE-SET,AI,AI
+
+  - GEOSITE,category-ai-chat-!cn,AI
+
+
+  # === 自定义 AI / LLM 域名全部走 AI ===
+  - DOMAIN,ai.google.dev,AI
+  - DOMAIN,apis.google.com,AI
+  - DOMAIN,alkalimakersuite-pa.clients6.google.com,AI
+  - DOMAIN,makersuite.google.com,AI
+  - DOMAIN-SUFFIX,bard.google.com,AI
+  - DOMAIN-SUFFIX,deepmind.com,AI
+  - DOMAIN-SUFFIX,deepmind.google,AI
+  - DOMAIN-SUFFIX,gemini.google.com,AI
+  - DOMAIN-SUFFIX,generativeai.google,AI
+  - DOMAIN-SUFFIX,proactivebackend-pa.googleapis.com,AI
+  - DOMAIN-SUFFIX,mtalk.google.com,AI
+
+  - DOMAIN-SUFFIX,chatgpt.com,AI
+  - DOMAIN-SUFFIX,openai.com,AI
+  - DOMAIN-SUFFIX,oaistatic.com,AI
+  - DOMAIN-SUFFIX,oaiusercontent.com,AI
+  - DOMAIN-SUFFIX,openaiapi-site.azureedge.net,AI
+  - DOMAIN-SUFFIX,sora.com,AI
+
+  - DOMAIN-SUFFIX,anthropic.com,AI
+  - DOMAIN-KEYWORD,claude,AI
+  - DOMAIN-KEYWORD,anthropic,AI
+
+  - DOMAIN-SUFFIX,grok.com,AI
+  - DOMAIN,console.groq.com,AI
+  - DOMAIN,api.groq.com,AI
+
+  - DOMAIN,api.githubcopilot.com,AI
+  - DOMAIN-SUFFIX,copilot.microsoft.com,AI
+  - DOMAIN-SUFFIX,copilot.cloud.microsoft,AI
+  - DOMAIN,copilot-proxy.githubusercontent.com,AI
+
+  - DOMAIN,sydney.bing.com,AI
+  - DOMAIN-SUFFIX,ai.azure.com,AI
+
+  - DOMAIN-SUFFIX,perplexity.ai,AI
+  - DOMAIN-SUFFIX,mistral.ai,AI
+  - DOMAIN-SUFFIX,meta.ai,AI
+  - DOMAIN,api.together.xyz,AI
+
+  - DOMAIN-SUFFIX,cdn.usefathom.com,AI
+  - DOMAIN-KEYWORD,usefathom,AI
+
+  - DOMAIN-SUFFIX,client-api.arkoselabs.com,AI
+  - DOMAIN-SUFFIX,intercom.io,AI
+  - DOMAIN-SUFFIX,intercomcdn.com,AI
+  - DOMAIN-SUFFIX,grazie.ai,AI
+  - DOMAIN-SUFFIX,grazie.aws.intellij.net,AI
+  - DOMAIN-SUFFIX,identrust.com,AI
+  - DOMAIN,www.gstatic.com,AI
+  - DOMAIN,fonts.gstatic.com,AI
+  - DOMAIN,lh3.googleusercontent.com,AI
+
+  - DOMAIN-KEYWORD,colab,AI
+  - DOMAIN-KEYWORD,developerprofiles,AI
+  - DOMAIN-KEYWORD,generativelanguage,AI
+
+  # 流媒体
+  - RULE-SET,Netflix,Netflix
+  - RULE-SET,YouTube,油管视频
+
+  # 国内直连
+  - RULE-SET,ChinaDomain,DIRECT
+  - GEOIP,CN,DIRECT
+
+  # Steam 强制直连
+  - PROCESS-NAME,steam.exe,DIRECT
+  - PROCESS-NAME,steamwebhelper.exe,DIRECT
+  - DOMAIN-SUFFIX,steampowered.com,DIRECT
+  - DOMAIN-SUFFIX,store.steampowered.com,DIRECT
+  - DOMAIN-SUFFIX,steamcommunity.com,DIRECT
+  - DOMAIN-SUFFIX,steamcontent.com,DIRECT
+  - DOMAIN-SUFFIX,steamstatic.com,DIRECT
+  - DOMAIN-KEYWORD,steamcdn,DIRECT
+  - DOMAIN-KEYWORD,steam,DIRECT
+
+  - MATCH,主力
