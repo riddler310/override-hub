@@ -1,3 +1,6 @@
+profile:
+  store-selected: true   # <--- 关键：强制内核记住你的选择
+  store-fake-ip: true    # 建议开启，保存 fake-ip 映射，减少解析错误
 geodata-mode: true
 geo-auto-update: true
 geo-update-interval: 24
