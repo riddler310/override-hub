@@ -1,6 +1,6 @@
 profile:
-  store-selected: true   # <--- 关键：强制内核记住你的选择
-  store-fake-ip: true    # 建议开启，保存 fake-ip 映射，减少解析错误
+  store-selected: true
+  store-fake-ip: true
 geodata-mode: true
 geo-auto-update: true
 geo-update-interval: 24
@@ -46,9 +46,16 @@ proxy-groups:
     include-all: true
     filter: .*
 
-  # === AI 分组（原 OpenAi ）===
   - name: AI
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png
+    type: select
+    include-all: true
+    filter: .*
+    proxies:
+      - 链式代理
+      
+   - name: Google
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
     type: select
     include-all: true
     filter: .*
@@ -61,7 +68,7 @@ proxy-groups:
     include-all: true
     filter: .*
 
-  - name: 油管视频
+  - name: YouTube
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
     type: select
     include-all: true
@@ -74,8 +81,6 @@ proxy-groups:
       - REJECT
       - DIRECT
 
-
-
 rule-providers:
   BanAD:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/BanAD.list
@@ -85,7 +90,6 @@ rule-providers:
     format: text
     type: http
 
-  # 将 OpenAi 更名为 AI
   AI:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/OpenAi.list
     path: ./ruleset/AI.list
@@ -93,6 +97,14 @@ rule-providers:
     interval: 86400
     format: text
     type: http
+    
+  google:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/google.txt"
+    path: ./ruleset/google.yaml
+    format: text
+    interval: 86400
 
   Netflix:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Netflix.list
@@ -126,80 +138,17 @@ rule-providers:
     format: text
     type: http
 
-
-
 rules:
   - RULE-SET,LocalAreaNetwork,DIRECT
-
   - RULE-SET,BanAD,广告拦截
-
-  # OpenAi → AI
   - RULE-SET,AI,AI
 
-  - GEOSITE,category-ai-chat-!cn,AI
-
-
-  # === 自定义 AI / LLM 域名全部走 AI ===
-  - DOMAIN,ai.google.dev,AI
-  - DOMAIN,apis.google.com,AI
-  - DOMAIN,alkalimakersuite-pa.clients6.google.com,AI
-  - DOMAIN,makersuite.google.com,AI
-  - DOMAIN-SUFFIX,bard.google.com,AI
-  - DOMAIN-SUFFIX,deepmind.com,AI
-  - DOMAIN-SUFFIX,deepmind.google,AI
-  - DOMAIN-SUFFIX,gemini.google.com,AI
-  - DOMAIN-SUFFIX,generativeai.google,AI
-  - DOMAIN-SUFFIX,proactivebackend-pa.googleapis.com,AI
-  - DOMAIN-SUFFIX,mtalk.google.com,AI
-
-  - DOMAIN-SUFFIX,chatgpt.com,AI
-  - DOMAIN-SUFFIX,openai.com,AI
-  - DOMAIN-SUFFIX,oaistatic.com,AI
-  - DOMAIN-SUFFIX,oaiusercontent.com,AI
-  - DOMAIN-SUFFIX,openaiapi-site.azureedge.net,AI
-  - DOMAIN-SUFFIX,sora.com,AI
-
-  - DOMAIN-SUFFIX,anthropic.com,AI
-  - DOMAIN-KEYWORD,claude,AI
-  - DOMAIN-KEYWORD,anthropic,AI
-
-  - DOMAIN-SUFFIX,grok.com,AI
-  - DOMAIN,console.groq.com,AI
-  - DOMAIN,api.groq.com,AI
-
-  - DOMAIN,api.githubcopilot.com,AI
-  - DOMAIN-SUFFIX,copilot.microsoft.com,AI
-  - DOMAIN-SUFFIX,copilot.cloud.microsoft,AI
-  - DOMAIN,copilot-proxy.githubusercontent.com,AI
-
-  - DOMAIN,sydney.bing.com,AI
-  - DOMAIN-SUFFIX,ai.azure.com,AI
-
-  - DOMAIN-SUFFIX,perplexity.ai,AI
-  - DOMAIN-SUFFIX,mistral.ai,AI
-  - DOMAIN-SUFFIX,meta.ai,AI
-  - DOMAIN,api.together.xyz,AI
-
-  - DOMAIN-SUFFIX,cdn.usefathom.com,AI
-  - DOMAIN-KEYWORD,usefathom,AI
-
-  - DOMAIN-SUFFIX,client-api.arkoselabs.com,AI
-  - DOMAIN-SUFFIX,intercom.io,AI
-  - DOMAIN-SUFFIX,intercomcdn.com,AI
-  - DOMAIN-SUFFIX,grazie.ai,AI
-  - DOMAIN-SUFFIX,grazie.aws.intellij.net,AI
-  - DOMAIN-SUFFIX,identrust.com,AI
-  - DOMAIN,www.gstatic.com,AI
-  - DOMAIN,fonts.gstatic.com,AI
-  - DOMAIN,lh3.googleusercontent.com,AI
-
-  - DOMAIN-KEYWORD,colab,AI
-  - DOMAIN-KEYWORD,developerprofiles,AI
-  - DOMAIN-KEYWORD,generativelanguage,AI
+  
 
   # 流媒体
   - RULE-SET,Netflix,Netflix
-  - RULE-SET,YouTube,油管视频
+  - RULE-SET,YouTube,YouTube
+  - RULE-SET,google,Google
 
   # 国内直连
   - RULE-SET,ChinaDomain,DIRECT
