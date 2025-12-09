@@ -55,7 +55,7 @@ proxy-groups:
       - 链式代理
       
    - name: Google
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google_Search.png
     type: select
     include-all: true
     filter: .*
