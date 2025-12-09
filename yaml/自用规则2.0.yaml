@@ -54,14 +54,6 @@ proxy-groups:
     proxies:
       - 链式代理
       
-   - name: Google
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google_Search.png
-    type: select
-    include-all: true
-    filter: .*
-    proxies:
-      - 链式代理
-
   - name: Netflix
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
     type: select
@@ -98,13 +90,6 @@ rule-providers:
     format: text
     type: http
     
-  google:
-    type: http
-    behavior: domain
-    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/google.txt"
-    path: ./ruleset/google.yaml
-    format: text
-    interval: 86400
 
   Netflix:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Netflix.list
@@ -148,7 +133,6 @@ rules:
   # 流媒体
   - RULE-SET,Netflix,Netflix
   - RULE-SET,YouTube,YouTube
-  - RULE-SET,google,Google
 
   # 国内直连
   - RULE-SET,ChinaDomain,DIRECT
