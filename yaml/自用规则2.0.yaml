@@ -60,6 +60,8 @@ proxy-groups:
     type: select
     include-all: true
     filter: .*
+    proxies:
+      - 链式代理
   # -------------------------------
 
   - name: Netflix
