@@ -54,6 +54,14 @@ proxy-groups:
     proxies:
       - 链式代理
       
+  # --- ADDED GOOGLE GROUP HERE ---
+  - name: Google
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
+    type: select
+    include-all: true
+    filter: .*
+  # -------------------------------
+
   - name: Netflix
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
     type: select
@@ -90,6 +98,15 @@ rule-providers:
     format: text
     type: http
     
+  # --- ADDED GOOGLE PROVIDER HERE ---
+  Google:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Google.list
+    path: ./ruleset/Google.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  # ----------------------------------
 
   Netflix:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Netflix.list
@@ -128,11 +145,13 @@ rules:
   - RULE-SET,BanAD,广告拦截
   - RULE-SET,AI,AI
 
-  
-
   # 流媒体
   - RULE-SET,Netflix,Netflix
   - RULE-SET,YouTube,YouTube
+  
+  # --- ADDED GOOGLE RULE HERE ---
+  - RULE-SET,Google,Google
+  # ------------------------------
 
   # 国内直连
   - RULE-SET,ChinaDomain,DIRECT
