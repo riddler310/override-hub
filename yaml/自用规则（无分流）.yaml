@@ -14,7 +14,7 @@ proxy-groups:
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
     type: select
     include-all: true
-    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend)|(?-i)aws
+    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
     proxies:
       - 备用
 
@@ -22,7 +22,7 @@ proxy-groups:
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
     type: url-test
     include-all: true
-    exclude-filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend)|(?-i)aws
+    exclude-filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
     interval: 300
     tolerance: 50
     lazy: true
