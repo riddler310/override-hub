@@ -38,7 +38,8 @@ proxy-groups:
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png
     type: select
     include-all: true
-    dialer-proxy: 中转节点  # 通过此属性替代 relay 模式
+    dialer-proxy: 中转节点
+    override-dialer: true  # 强制覆盖节点自身的拨号行为，走链式代理
     filter: .*
 
   - name: AI
