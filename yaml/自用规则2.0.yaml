@@ -98,6 +98,14 @@ rule-providers:
     interval: 86400
     format: text
     type: http
+
+  AI-Plus:
+    url: https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/AI/AI.list
+    path: ./ruleset/AI-Plus.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
     
   # --- ADDED GOOGLE PROVIDER HERE ---
   Google:
