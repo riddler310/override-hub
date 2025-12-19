@@ -152,6 +152,12 @@ rule-providers:
 rules:
   - RULE-SET,LocalAreaNetwork,DIRECT
   - RULE-SET,BanAD,广告拦截
+
+  - DOMAIN-SUFFIX,claude.ai,AI
+  - DOMAIN-SUFFIX,anthropic.com,AI
+  - DOMAIN-SUFFIX,anthropic.ai,AI
+  - DOMAIN-SUFFIX,x.ai,AI
+  - DOMAIN-SUFFIX,grok.x.ai,AI
   
   # Gemini 不走 AI（强制走 Google）
   - DOMAIN-SUFFIX,gemini.google.com,Google
