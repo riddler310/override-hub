@@ -98,14 +98,6 @@ rule-providers:
     interval: 86400
     format: text
     type: http
-
-  AI-Plus:
-    url: https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/AI/AI.list
-    path: ./ruleset/AI-Plus.list
-    behavior: classical
-    interval: 86400
-    format: text
-    type: http
     
   # --- ADDED GOOGLE PROVIDER HERE ---
   Google:
@@ -163,8 +155,6 @@ rules:
   - DOMAIN-SUFFIX,gemini.google.com,Google
   - DOMAIN-SUFFIX,ai.google.dev,Google
   - DOMAIN-SUFFIX,generativelanguage.googleapis.com,Google
-
-  - RULE-SET,AI-Plus,AI
   - RULE-SET,AI,AI
 
   # 流媒体
