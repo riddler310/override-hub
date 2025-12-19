@@ -144,6 +144,13 @@ rule-providers:
 rules:
   - RULE-SET,LocalAreaNetwork,DIRECT
   - RULE-SET,BanAD,广告拦截
+  
+  # Gemini 不走 AI（强制走 Google）
+  - DOMAIN-SUFFIX,gemini.google.com,Google
+  - DOMAIN-SUFFIX,ai.google.dev,Google
+  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,Google
+
+  - RULE-SET,AI-Plus,AI
   - RULE-SET,AI,AI
 
   # 流媒体
@@ -159,14 +166,8 @@ rules:
   - GEOIP,CN,DIRECT
 
   # Steam 强制直连
-  - PROCESS-NAME,steam.exe,DIRECT
-  - PROCESS-NAME,steamwebhelper.exe,DIRECT
-  - DOMAIN-SUFFIX,steampowered.com,DIRECT
-  - DOMAIN-SUFFIX,store.steampowered.com,DIRECT
-  - DOMAIN-SUFFIX,steamcommunity.com,DIRECT
   - DOMAIN-SUFFIX,steamcontent.com,DIRECT
   - DOMAIN-SUFFIX,steamstatic.com,DIRECT
   - DOMAIN-KEYWORD,steamcdn,DIRECT
-  - DOMAIN-KEYWORD,steam,DIRECT
 
   - MATCH,主力
