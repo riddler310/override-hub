@@ -36,6 +36,7 @@ rules:
   - IP-CIDR,172.16.0.0/12,DIRECT
 
   # 中国流量直连
+  - RULE-SET,ChinaDomain,DIRECT
   - GEOIP,CN,DIRECT
 
   # 其余全部走主力
