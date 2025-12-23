@@ -1,0 +1,62 @@
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+geodata-mode: true
+geo-auto-update: true
+geo-update-interval: 24
+geox-url:
+  geoip: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat
+  geosite: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat
+
+proxy-groups:
+  - name: 主力
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
+    type: select
+    include-all: true
+    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
+    proxies:
+      - 备用
+      - 链式代理
+
+  - name: 备用
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
+    type: url-test
+    include-all: true
+    exclude-filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
+    interval: 300
+    tolerance: 50
+    lazy: true
+
+  - name: 链式代理
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png
+    type: relay
+    proxies:
+      - 中转节点
+      - 落地节点
+
+  - name: 中转节点
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Domestic.png
+    type: select
+    include-all: true
+    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
+
+  - name: 落地节点
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png
+    type: select
+    include-all: true
+    filter: .*
+
+rules:
+  # 本地 / 局域网直连
+  - DOMAIN-SUFFIX,local,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+
+  # 中国流量直连
+  - GEOIP,CN,DIRECT
+
+  # 其余全部走主力
+  - MATCH,主力
