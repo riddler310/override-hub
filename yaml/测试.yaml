@@ -29,15 +29,13 @@ proxy-groups:
     tolerance: 50
     lazy: true
 
-  # ✅ 修复点：relay 已废弃，改为 select（保证一次能跑）
+  # ✅ relay 已移除：改为 dialer-proxy，实现“中转(前置) -> 落地”
   - name: 链式代理
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png
-    type: select
+    type: dialer-proxy
     proxies:
-      # 真正“中转->落地”链式效果需在订阅覆写中对“落地节点/落地provider”加 dialer-proxy: 中转节点
-      - 中转节点
       - 落地节点
-      - DIRECT
+    dialer-proxy: 中转节点
 
   - name: 中转节点
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Domestic.png
@@ -59,7 +57,6 @@ proxy-groups:
     proxies:
       - 链式代理
 
-  # --- ADDED GOOGLE GROUP HERE ---
   - name: Google
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
     type: select
@@ -67,7 +64,6 @@ proxy-groups:
     filter: .*
     proxies:
       - 链式代理
-  # -------------------------------
 
   - name: Netflix
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
@@ -105,7 +101,6 @@ rule-providers:
     format: text
     type: http
 
-  # --- ADDED GOOGLE PROVIDER HERE ---
   Google:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Google.list
     path: ./ruleset/Google.list
@@ -113,7 +108,6 @@ rule-providers:
     interval: 86400
     format: text
     type: http
-  # ----------------------------------
 
   Netflix:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Netflix.list
@@ -167,9 +161,7 @@ rules:
   - RULE-SET,Netflix,Netflix
   - RULE-SET,YouTube,YouTube
 
-  # --- ADDED GOOGLE RULE HERE ---
   - RULE-SET,Google,Google
-  # ------------------------------
 
   # 国内直连
   - RULE-SET,ChinaDomain,DIRECT
