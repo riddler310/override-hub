@@ -7,16 +7,9 @@ geo-update-interval: 24
 geox-url:
   geoip: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat
   geosite: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat
-proxy-groups:
-  - name: 主力
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
-    type: select
-    include-all: true
-    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
-    proxies:
-      - 备用
-      - 落地节点
 
+proxy-groups:
+  # --- 1. 基础自动选路组 ---
   - name: 备用
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
     type: url-test
@@ -26,12 +19,14 @@ proxy-groups:
     tolerance: 50
     lazy: true
 
+  # --- 2. 链式代理：前置组 ---
   - name: 前置代理
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Domestic.png
     type: select
     include-all: true
     filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
 
+  # --- 3. 链式代理：落地组 ---
   - name: 落地节点
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png
     type: select
@@ -39,6 +34,17 @@ proxy-groups:
     include-all: true
     filter: .*
 
+  # --- 4. 核心主力组（引用上方已定义的组） ---
+  - name: 主力
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
+    type: select
+    include-all: true
+    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
+    proxies:
+      - 备用
+      - 落地节点
+
+  # --- 5. 业务分类组 ---
   - name: AI
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png
     type: select
@@ -46,8 +52,7 @@ proxy-groups:
     filter: .*
     proxies:
       - 落地节点
-      
-  # --- ADDED GOOGLE GROUP HERE ---
+
   - name: Google
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
     type: select
@@ -55,7 +60,6 @@ proxy-groups:
     filter: .*
     proxies:
       - 落地节点
-  # -------------------------------
 
   - name: Netflix
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
@@ -92,8 +96,7 @@ rule-providers:
     interval: 86400
     format: text
     type: http
-    
-  # --- ADDED GOOGLE PROVIDER HERE ---
+
   Google:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Google.list
     path: ./ruleset/Google.list
@@ -101,7 +104,6 @@ rule-providers:
     interval: 86400
     format: text
     type: http
-  # ----------------------------------
 
   Netflix:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Netflix.list
@@ -136,36 +138,34 @@ rule-providers:
     type: http
 
 rules:
+  # 基础过滤
   - RULE-SET,LocalAreaNetwork,DIRECT
   - RULE-SET,BanAD,广告拦截
 
+  # AI 分流（Gemini 强制走 Google）
+  - DOMAIN-SUFFIX,gemini.google.com,Google
+  - DOMAIN-SUFFIX,ai.google.dev,Google
+  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,Google
   - DOMAIN-SUFFIX,claude.ai,AI
   - DOMAIN-SUFFIX,anthropic.com,AI
   - DOMAIN-SUFFIX,anthropic.ai,AI
   - DOMAIN,x.ai,AI
   - DOMAIN-SUFFIX,x.ai,AI
-  
-  # Gemini 不走 AI（强制走 Google）
-  - DOMAIN-SUFFIX,gemini.google.com,Google
-  - DOMAIN-SUFFIX,ai.google.dev,Google
-  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,Google
   - RULE-SET,AI,AI
 
-  # 流媒体
+  # 流媒体与谷歌
   - RULE-SET,Netflix,Netflix
   - RULE-SET,YouTube,YouTube
-  
-  # --- ADDED GOOGLE RULE HERE ---
   - RULE-SET,Google,Google
-  # ------------------------------
+
+  # Steam 直连
+  - DOMAIN-SUFFIX,steamcontent.com,DIRECT
+  - DOMAIN-SUFFIX,steamstatic.com,DIRECT
+  - DOMAIN-KEYWORD,steamcdn,DIRECT
 
   # 国内直连
   - RULE-SET,ChinaDomain,DIRECT
   - GEOIP,CN,DIRECT
 
-  # Steam 强制直连
-  - DOMAIN-SUFFIX,steamcontent.com,DIRECT
-  - DOMAIN-SUFFIX,steamstatic.com,DIRECT
-  - DOMAIN-KEYWORD,steamcdn,DIRECT
-
+  # 兜底
   - MATCH,主力
