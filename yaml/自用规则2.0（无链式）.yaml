@@ -1,0 +1,153 @@
+profile:
+  store-selected: true
+  store-fake-ip: true
+geodata-mode: true
+geo-auto-update: true
+geo-update-interval: 24
+geox-url:
+  geoip: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat
+  geosite: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat
+proxy-groups:
+  - name: 主力
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
+    type: select
+    include-all: true
+    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
+    proxies:
+      - 备用 # 移除链式代理，使用备用作为备选
+      
+  - name: 备用
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
+    type: url-test
+    include-all: true
+    exclude-filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
+    interval: 300
+    tolerance: 50
+    lazy: true
+
+  # 链式代理、中转节点、落地节点 代理组已删除
+
+  - name: AI
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png
+    type: select
+    include-all: true
+    filter: .*
+    proxies:
+      - 备用 # 原引用链式代理，现改为备用
+      
+  - name: Google
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
+    type: select
+    include-all: true
+    filter: .*
+    proxies:
+      - 备用 # 原引用链式代理，现改为备用
+
+  - name: Netflix
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
+    type: select
+    include-all: true
+    filter: .*
+
+  - name: YouTube
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
+    type: select
+    include-all: true
+    filter: .*
+
+  - name: 广告拦截
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+
+rule-providers:
+  BanAD:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/BanAD.list
+    path: ./ruleset/BanAD.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+
+  AI:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/OpenAi.list
+    path: ./ruleset/AI.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+    
+  Google:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Google.list
+    path: ./ruleset/Google.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+
+  Netflix:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Netflix.list
+    path: ./ruleset/Netflix.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+
+  YouTube:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/YouTube.list
+    path: ./ruleset/YouTube.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+
+  LocalAreaNetwork:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/LocalAreaNetwork.list
+    path: ./ruleset/LocalAreaNetwork.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+
+  ChinaDomain:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ChinaDomain.list
+    path: ./ruleset/ChinaDomain.list
+    behavior: domain
+    interval: 86400
+    format: text
+    type: http
+
+rules:
+  - RULE-SET,LocalAreaNetwork,DIRECT
+  - RULE-SET,BanAD,广告拦截
+
+  - DOMAIN-SUFFIX,claude.ai,AI
+  - DOMAIN-SUFFIX,anthropic.com,AI
+  - DOMAIN-SUFFIX,anthropic.ai,AI
+  - DOMAIN,x.ai,AI
+  - DOMAIN-SUFFIX,x.ai,AI
+  
+  # Gemini 不走 AI（强制走 Google）
+  - DOMAIN-SUFFIX,gemini.google.com,Google
+  - DOMAIN-SUFFIX,ai.google.dev,Google
+  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,Google
+  - RULE-SET,AI,AI
+
+  # 流媒体
+  - RULE-SET,Netflix,Netflix
+  - RULE-SET,YouTube,YouTube
+  
+  - RULE-SET,Google,Google
+
+  # 国内直连
+  - RULE-SET,ChinaDomain,DIRECT
+  - GEOIP,CN,DIRECT
+
+  # Steam 强制直连
+  - DOMAIN-SUFFIX,steamcontent.com,DIRECT
+  - DOMAIN-SUFFIX,steamstatic.com,DIRECT
+  - DOMAIN-KEYWORD,steamcdn,DIRECT
+
+  - MATCH,主力
