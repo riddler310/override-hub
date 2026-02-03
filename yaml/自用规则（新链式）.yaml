@@ -1,15 +1,44 @@
+port: 7890
+socks-port: 7891
+allow-lan: false
+mode: rule
+log-level: info
+external-controller: 127.0.0.1:9090
+
+dns:
+  enable: true
+  listen: 0.0.0.0:53
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  fallback:
+    - 8.8.8.8
+    - 1.1.1.1
+
 profile:
   store-selected: true
   store-fake-ip: true
+
 geodata-mode: true
 geo-auto-update: true
 geo-update-interval: 24
+
 geox-url:
   geoip: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat
   geosite: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat
 
 proxy-groups:
-  # --- 1. 基础自动选路组 ---
+  - name: 主力
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
+    type: select
+    include-all: true
+    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
+    proxies:
+      - 落地
+      - 备用
+
   - name: 备用
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
     type: url-test
@@ -19,39 +48,37 @@ proxy-groups:
     tolerance: 50
     lazy: true
 
-  # --- 2. 链式代理：前置组 ---
-  - name: 前置代理
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Domestic.png
+  # ================== 中转 & 落地（dialer-proxy 链式）==================
+  - name: 中转
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Router.png
     type: select
     include-all: true
-    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
-
-  # --- 3. 链式代理：落地组 ---
-  - name: 落地节点
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png
-    type: select
-    dialer-proxy: 前置代理
-    include-all: true
-    filter: .*
-
-  # --- 4. 核心主力组（引用上方已定义的组） ---
-  - name: 主力
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
-    type: select
-    include-all: true
-    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
+    # 中转组包含 iepl、dmit、megabox
+    filter: (?i)(iepl|dmit|megabox)
     proxies:
-      - 备用
-      - 落地节点
+      - DIRECT
 
-  # --- 5. 业务分类组 ---
+  - name: 落地
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Server.png
+    type: select
+    include-all: true
+    # 落地组只包含“落地”
+    filter: (?i)(落地)
+    # 落地节点默认先通过中转组当前选中节点
+    dialer-proxy: 中转
+    proxies:
+      - DIRECT
+  # =====================================================================
+
   - name: AI
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png
     type: select
     include-all: true
     filter: .*
     proxies:
-      - 落地节点
+      - 落地
+      - 主力
+      - 备用
 
   - name: Google
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
@@ -59,19 +86,29 @@ proxy-groups:
     include-all: true
     filter: .*
     proxies:
-      - 落地节点
+      - 落地
+      - 主力
+      - 备用
 
   - name: Netflix
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
     type: select
     include-all: true
     filter: .*
+    proxies:
+      - 落地
+      - 主力
+      - 备用
 
   - name: YouTube
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
     type: select
     include-all: true
     filter: .*
+    proxies:
+      - 落地
+      - 主力
+      - 备用
 
   - name: 广告拦截
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png
@@ -138,34 +175,40 @@ rule-providers:
     type: http
 
 rules:
-  # 基础过滤
   - RULE-SET,LocalAreaNetwork,DIRECT
   - RULE-SET,BanAD,广告拦截
 
-  # AI 分流（Gemini 强制走 Google）
-  - DOMAIN-SUFFIX,gemini.google.com,Google
-  - DOMAIN-SUFFIX,ai.google.dev,Google
-  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,Google
   - DOMAIN-SUFFIX,claude.ai,AI
   - DOMAIN-SUFFIX,anthropic.com,AI
   - DOMAIN-SUFFIX,anthropic.ai,AI
   - DOMAIN,x.ai,AI
   - DOMAIN-SUFFIX,x.ai,AI
+
+  # Gemini 不走 AI（强制走 Google）
+  - DOMAIN-SUFFIX,gemini.google.com,Google
+  - DOMAIN-SUFFIX,ai.google.dev,Google
+  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,Google
   - RULE-SET,AI,AI
 
-  # 流媒体与谷歌
+  # 流媒体
   - RULE-SET,Netflix,Netflix
   - RULE-SET,YouTube,YouTube
+
+  # Google
   - RULE-SET,Google,Google
 
-  # Steam 直连
+  # 国内直连
+  - RULE-SET,ChinaDomain,DIRECT
+  - DOMAIN-SUFFIX,local,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+  - GEOIP,CN,DIRECT
+
+  # Steam 强制直连
   - DOMAIN-SUFFIX,steamcontent.com,DIRECT
   - DOMAIN-SUFFIX,steamstatic.com,DIRECT
   - DOMAIN-KEYWORD,steamcdn,DIRECT
 
-  # 国内直连
-  - RULE-SET,ChinaDomain,DIRECT
-  - GEOIP,CN,DIRECT
-
-  # 兜底
   - MATCH,主力
