@@ -145,6 +145,10 @@ rules:
   - DOMAIN-SUFFIX,anthropic.ai,AI
   - DOMAIN,x.ai,AI
   - DOMAIN-SUFFIX,x.ai,AI
+
+  # Add Grok and Perplexity routing to AI group
+  - DOMAIN-SUFFIX,grok.com,AI
+  - DOMAIN-SUFFIX,perplexity.ai,AI
   
   # Gemini 不走 AI（强制走 Google）
   - DOMAIN-SUFFIX,gemini.google.com,Google
