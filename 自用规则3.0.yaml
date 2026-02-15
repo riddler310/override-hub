@@ -70,48 +70,48 @@ tun:
   auto-detect-interface: true
 
 proxy-groups:
-  - name: 主力
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
+  # --- 主力节点组 (包含所有节点) ---
+  - name: 🚀 主力
     type: select
+    interval: 0
+    url: &url http://www.gstatic.com/generate_204
     include-all: true
-    filter: .*
     proxies:
       - DIRECT
-      
-  - name: AI
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png
-    type: select
-    include-all: true
-    filter: .*
 
-      
-  # --- ADDED GOOGLE GROUP HERE ---
-  - name: Google
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
+  # --- 分流组 (可直选所有节点) ---
+  - name: 🤖 AI
     type: select
+    interval: 0
+    url: *url
     include-all: true
-    filter: .*
-
-  # -------------------------------
-
-  - name: Netflix
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
-    type: select
-    include-all: true
-    filter: .*
-
-  - name: YouTube
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
-    type: select
-    include-all: true
-    filter: .*
     
+  - name: 🎥 Netflix
+    type: select
+    interval: 0
+    url: *url
+    include-all: true
+
+  - name: 📹 YouTube
+    type: select
+    interval: 0
+    url: *url
+    include-all: true
+
+  - name: 🔍 Google
+    type: select
+    interval: 0
+    url: *url
+    include-all: true
+
+  # --- 其他分流 ---
   - name: 🇨🇳 大陆网站
     type: select
     interval: 0
     proxies:
       - DIRECT
-      - 💨 代理
+      - 🚀 主力
+
   - name: 🛑 广告
     type: select
     interval: 0
@@ -120,14 +120,16 @@ proxy-groups:
       - REJECT
       - REJECT-DROP
       - DIRECT
-      - 💨 代理
+      - 🚀 主力
+
   - name: 🧱 国外网站 & 漏网之鱼
     type: select
     interval: 0
     url: *url
     proxies:
-      - 💨 代理
+      - 🚀 主力
       - DIRECT
+
 rules:
   - RULE-SET,private,DIRECT
   - RULE-SET,privateip,DIRECT,no-resolve
@@ -135,21 +137,19 @@ rules:
   - DOMAIN,data.bilibili.com,🛑 广告
   - DOMAIN,dataflow.bilibili.com,🛑 广告
   - RULE-SET,ads,🛑 广告
-  - DOMAIN-SUFFIX,claude.ai,AI
-  - DOMAIN-SUFFIX,anthropic.com,AI
-  - DOMAIN-SUFFIX,anthropic.ai,AI
-  - DOMAIN,x.ai,AI
-  - DOMAIN-SUFFIX,x.ai,AI
-  - DOMAIN-SUFFIX,grok.com,AI
-  - DOMAIN-SUFFIX,perplexity.ai,AI
-  # 流媒体
-  - RULE-SET,Netflix,Netflix
-  - RULE-SET,YouTube,YouTube
-  - RULE-SET,Google,Google
+  
+  # --- 分流规则 ---
+  - RULE-SET,ai,🤖 AI
+  - RULE-SET,netflix,🎥 Netflix
+  - RULE-SET,youtube,📹 YouTube
+  - RULE-SET,google,🔍 Google
+  # ---------------
+
   - RULE-SET,proxy,🧱 国外网站 & 漏网之鱼
   - RULE-SET,cn,🇨🇳 大陆网站
   - RULE-SET,cnip,🇨🇳 大陆网站
   - MATCH,🧱 国外网站 & 漏网之鱼
+
 rule-providers:
   private:
     <<: &r
@@ -171,6 +171,22 @@ rule-providers:
     <<: *r
     path: ./rules/ads.mrs
     url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/ads.mrs"
+  ai:
+    <<: *r
+    path: ./rules/ai.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/ai.mrs"
+  netflix:
+    <<: *r
+    path: ./rules/netflix.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/netflix.mrs"
+  youtube:
+    <<: *r
+    path: ./rules/youtube.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/youtube.mrs"
+  google:
+    <<: *r
+    path: ./rules/google.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/google.mrs"
   proxy:
     <<: *r
     path: ./rules/proxy.mrs
