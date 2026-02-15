@@ -139,10 +139,22 @@ rules:
   - RULE-SET,ads,🛑 广告
   
   # --- 分流规则 ---
-  - RULE-SET,ai,🤖 AI
+  - DOMAIN-SUFFIX,anthropic.com,AI
+  - DOMAIN-SUFFIX,anthropic.ai,AI
+  - DOMAIN,x.ai,AI
+  - DOMAIN-SUFFIX,x.ai,AI
+
+  # Add Grok and Perplexity routing to AI group
+  - DOMAIN-SUFFIX,grok.com,AI
+  - DOMAIN-SUFFIX,perplexity.ai,AI
+  
   - RULE-SET,netflix,🎥 Netflix
   - RULE-SET,youtube,📹 YouTube
+  - DOMAIN-SUFFIX,gemini.google.com,Google
+  - DOMAIN-SUFFIX,ai.google.dev,Google
+  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,Google
   - RULE-SET,google,🔍 Google
+  - RULE-SET,ai,🤖 AI
   # ---------------
 
   - RULE-SET,proxy,🧱 国外网站 & 漏网之鱼
