@@ -209,3 +209,4 @@ rule-providers:
     interval: 86400
     path: ./rules/cnip.mrs
     url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/cnip.mrs"
+
