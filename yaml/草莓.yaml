@@ -1,60 +1,211 @@
-port: 7890
-socks-port: 7891
-allow-lan: false
 mode: rule
+ipv6: true
+allow-lan: false
 log-level: info
+mixed-port: 12345
+unified-delay: true
+tcp-concurrent: true
 external-controller: 127.0.0.1:9090
-dns:
-  enable: true
-  listen: 0.0.0.0:53
-  enhanced-mode: fake-ip
-  fake-ip-range: 198.18.0.1/16
-  nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
-  fallback:
-    - 8.8.8.8
-    - 1.1.1.1
+find-process-mode: strict
+global-client-fingerprint: firefox
+geodata-mode: false
 
 profile:
   store-selected: true
   store-fake-ip: true
 
-geodata-mode: true
-geo-auto-update: true
-geo-update-interval: 24
-geox-url:
-  geoip: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat
-  geosite: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat
+hosts:
+  time.facebook.com: 17.253.84.125
+  time.android.com: 17.253.84.125
+
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - "Mijia Cloud"
+    - "+.push.apple.com"
+
+dns:
+  enable: true
+  ipv6: true
+  prefer-h3: true
+  respect-rules: true
+  enhanced-mode: fake-ip
+  fake-ip-filter:
+    - rule-set,cn
+    - rule-set,fakeip-filter
+  default-nameserver: &cn
+    - quic://223.5.5.5
+    - quic://223.6.6.6
+  nameserver:
+    # 如果常用 TCP 协议的节点，如 vless、trojan 等
+    # 不包含没开 udp over tcp 的 ss！！！
+    # 请将此字段下未注释的行替换为如下内容
+     - tcp://8.8.8.8
+     - tcp://8.8.4.4
+    #- 8.8.8.8
+    #- 8.8.4.4
+  proxy-server-nameserver: *cn
+  direct-nameserver: *cn
+  nameserver-policy:
+    rule-set:cn: *cn
+
+tun:
+  enable: true
+  stack: system
+  device: utun-akasha
+  gso: true
+  dns-hijack:
+    - "any:53"
+    - "tcp://any:53"
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
 
 proxy-groups:
-  - name: 主力
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
+  # --- 主力节点组 (包含所有节点) ---
+  - name: 🚀 主力
     type: select
+    interval: 0
+    url: &url http://www.gstatic.com/generate_204
     include-all: true
-    filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
     proxies:
-      - 备用
+      - DIRECT
 
-  - name: 备用
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
-    type: url-test
+  # --- 分流组 (可直选所有节点) ---
+  - name: 🤖 AI
+    type: select
+    interval: 0
+    url: *url
     include-all: true
-    exclude-filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
-    interval: 300
-    tolerance: 50
-    lazy: true
+    
+  - name: 🎥 Netflix
+    type: select
+    interval: 0
+    url: *url
+    include-all: true
+
+  - name: 📹 YouTube
+    type: select
+    interval: 0
+    url: *url
+    include-all: true
+
+  - name: 🔍 Google
+    type: select
+    interval: 0
+    url: *url
+    include-all: true
+
+  # --- 其他分流 ---
+  - name: 🇨🇳 大陆网站
+    type: select
+    interval: 0
+    proxies:
+      - DIRECT
+      - 🚀 主力
+
+  - name: 🛑 广告
+    type: select
+    interval: 0
+    url: *url
+    proxies:
+      - REJECT
+      - REJECT-DROP
+      - DIRECT
+      - 🚀 主力
+
+  - name: 🧱 国外网站 & 漏网之鱼
+    type: select
+    interval: 0
+    url: *url
+    proxies:
+      - 🚀 主力
+      - DIRECT
 
 rules:
-  # 本地 / 局域网直连
-  - DOMAIN-SUFFIX,local,DIRECT
-  - IP-CIDR,127.0.0.0/8,DIRECT
-  - IP-CIDR,192.168.0.0/16,DIRECT
-  - IP-CIDR,10.0.0.0/8,DIRECT
-  - IP-CIDR,172.16.0.0/12,DIRECT
+  - RULE-SET,private,DIRECT
+  - RULE-SET,privateip,DIRECT,no-resolve
+  - AND,((NETWORK,UDP),(DST-PORT,443)),REJECT
+  - DOMAIN,data.bilibili.com,🛑 广告
+  - DOMAIN,dataflow.bilibili.com,🛑 广告
+  - RULE-SET,ads,🛑 广告
+  
+  # --- 分流规则 ---
+  
+  - RULE-SET,netflix,🎥 Netflix
+  - RULE-SET,youtube,📹 YouTube
+  - DOMAIN-SUFFIX,gemini.google.com,🔍 Google
+  - DOMAIN-SUFFIX,ai.google.dev,🔍 Google
+  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,🔍 Google
+  - DOMAIN-SUFFIX,grok.com,🤖 AI
+  - DOMAIN-SUFFIX,x.ai,🤖 AI
+  - DOMAIN-SUFFIX,perplexity.ai,🤖 AI
+  - RULE-SET,google,🔍 Google
+  - RULE-SET,ai,🤖 AI
+  # ---------------
 
-  # 中国流量直连
-  - GEOIP,CN,DIRECT
+  - RULE-SET,proxy,🧱 国外网站 & 漏网之鱼
+  - RULE-SET,cn,🇨🇳 大陆网站
+  - RULE-SET,cnip,🇨🇳 大陆网站
+  - MATCH,🧱 国外网站 & 漏网之鱼
 
-  # 其余全部走主力
-  - MATCH,主力
+rule-providers:
+  private:
+    <<: &r
+      type: http
+      behavior: domain
+      format: mrs
+      interval: 86400
+    path: ./rules/private.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/private.mrs"
+  privateip:
+    <<: *r
+    path: ./rules/privateip.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/privateip.mrs"
+  fakeip-filter:
+    <<: *r
+    path: ./rules/fakeip-filter.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/fakeip-filter.mrs"
+  ads:
+    <<: *r
+    path: ./rules/ads.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/ads.mrs"
+  ai:
+    <<: *r
+    path: ./rules/ai.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/ai.mrs"
+  netflix:
+    <<: *r
+    path: ./rules/netflix.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/netflix.mrs"
+  youtube:
+    <<: *r
+    path: ./rules/youtube.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/youtube.mrs"
+  google:
+    <<: *r
+    path: ./rules/google.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/google.mrs"
+  proxy:
+    <<: *r
+    path: ./rules/proxy.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/proxy.mrs"
+  cn:
+    <<: *r
+    path: ./rules/cn.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/cn.mrs"
+  cnip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    interval: 86400
+    path: ./rules/cnip.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/cnip.mrs"
