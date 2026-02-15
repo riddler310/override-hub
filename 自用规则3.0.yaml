@@ -75,6 +75,8 @@ proxy-groups:
     type: select
     include-all: true
     filter: .*
+    proxies:
+      - DIRECT
       
   - name: AI
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png
