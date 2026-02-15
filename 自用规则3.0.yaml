@@ -70,24 +70,40 @@ tun:
   auto-detect-interface: true
 
 proxy-groups:
-  - name: 💨 代理
+  - name: 主力
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
     type: select
-    interval: 0
-    url: &url http://www.gstatic.com/generate_204
-    proxies:
-      - 🛡️ 选择节点
-      - DIRECT
-      - 🤖 自动回退
-  - name: 🛡️ 选择节点
+    include-all: true
+    filter: .*
+      
+  - name: AI
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png
     type: select
-    interval: 0
-    url: *url
     include-all: true
-  - name: 🤖 自动回退
-    type: fallback
-    interval: 0
-    url: *url
+    filter: .*
+
+      
+  # --- ADDED GOOGLE GROUP HERE ---
+  - name: Google
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
+    type: select
     include-all: true
+    filter: .*
+
+  # -------------------------------
+
+  - name: Netflix
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
+    type: select
+    include-all: true
+    filter: .*
+
+  - name: YouTube
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
+    type: select
+    include-all: true
+    filter: .*
+    
   - name: 🇨🇳 大陆网站
     type: select
     interval: 0
@@ -117,6 +133,17 @@ rules:
   - DOMAIN,data.bilibili.com,🛑 广告
   - DOMAIN,dataflow.bilibili.com,🛑 广告
   - RULE-SET,ads,🛑 广告
+  - DOMAIN-SUFFIX,claude.ai,AI
+  - DOMAIN-SUFFIX,anthropic.com,AI
+  - DOMAIN-SUFFIX,anthropic.ai,AI
+  - DOMAIN,x.ai,AI
+  - DOMAIN-SUFFIX,x.ai,AI
+  - DOMAIN-SUFFIX,grok.com,AI
+  - DOMAIN-SUFFIX,perplexity.ai,AI
+  # 流媒体
+  - RULE-SET,Netflix,Netflix
+  - RULE-SET,YouTube,YouTube
+  - RULE-SET,Google,Google
   - RULE-SET,proxy,🧱 国外网站 & 漏网之鱼
   - RULE-SET,cn,🇨🇳 大陆网站
   - RULE-SET,cnip,🇨🇳 大陆网站
