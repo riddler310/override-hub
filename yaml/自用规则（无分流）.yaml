@@ -208,27 +208,5 @@ rule-providers:
     format: mrs
     interval: 86400
     path: ./rules/cnip.mrs
-    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/cnip.mrs"      - 备用
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/cnip.mrs"
 
-  - name: 备用
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
-    type: url-test
-    include-all: true
-    exclude-filter: (?i)(ix|bage|cf|jinx|bero|bwh|riddler|yyy|深港出口|出口|megabox|深港|IEPL|CNFaster|Renet|Karvl|DMIT|Zouter|JPSB|legend|洛杉矶)|(?-i)aws
-    interval: 300
-    tolerance: 50
-    lazy: true
-
-rules:
-  # 本地 / 局域网直连
-  - DOMAIN-SUFFIX,local,DIRECT
-  - IP-CIDR,127.0.0.0/8,DIRECT
-  - IP-CIDR,192.168.0.0/16,DIRECT
-  - IP-CIDR,10.0.0.0/8,DIRECT
-  - IP-CIDR,172.16.0.0/12,DIRECT
-
-  # 中国流量直连
-  - GEOIP,CN,DIRECT
-
-  # 其余全部走主力
-  - MATCH,主力
