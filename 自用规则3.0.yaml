@@ -79,12 +79,6 @@ proxy-groups:
     proxies:
       - DIRECT
 
-  # --- 分流组 (可直选所有节点) ---
-  - name: 🤖 AI
-    type: select
-    interval: 0
-    url: *url
-    include-all: true
     
   - name: 🎥 Netflix
     type: select
@@ -99,6 +93,12 @@ proxy-groups:
     include-all: true
 
   - name: 🔍 Google
+    type: select
+    interval: 0
+    url: *url
+    include-all: true
+
+  - name: 🤖 AI
     type: select
     interval: 0
     url: *url
