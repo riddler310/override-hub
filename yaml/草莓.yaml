@@ -138,17 +138,16 @@ rules:
   - DOMAIN,dataflow.bilibili.com,🛑 广告
   - RULE-SET,ads,🛑 广告
   
+  
   # --- 分流规则 ---
   
   - RULE-SET,netflix,🎥 Netflix
   - RULE-SET,youtube,📹 YouTube
-  - DOMAIN-SUFFIX,gemini.google.com,🔍 Google
-  - DOMAIN-SUFFIX,ai.google.dev,🔍 Google
-  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,🔍 Google
+  #- RULE-SET,google,🔍 Google
+  - GEOSITE,google,🔍 Google
   - DOMAIN-SUFFIX,grok.com,🤖 AI
   - DOMAIN-SUFFIX,x.ai,🤖 AI
   - DOMAIN-SUFFIX,perplexity.ai,🤖 AI
-  - RULE-SET,google,🔍 Google
   - RULE-SET,ai,🤖 AI
   # ---------------
 
