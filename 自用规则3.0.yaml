@@ -142,10 +142,11 @@ rules:
   
   - RULE-SET,netflix,🎥 Netflix
   - RULE-SET,youtube,📹 YouTube
+  - GEOSITE,google,🔍 Google
   - DOMAIN-SUFFIX,grok.com,🤖 AI
   - DOMAIN-SUFFIX,x.ai,🤖 AI
   - DOMAIN-SUFFIX,perplexity.ai,🤖 AI
-  - RULE-SET,google,🔍 Google
+  #- RULE-SET,google,🔍 Google
   - RULE-SET,ai,🤖 AI
   # ---------------
 
