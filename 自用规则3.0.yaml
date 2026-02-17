@@ -122,14 +122,6 @@ proxy-groups:
       - DIRECT
       - 🚀 主力
 
-  - name: 🧱 国外网站 & 漏网之鱼
-    type: select
-    interval: 0
-    url: *url
-    proxies:
-      - 🚀 主力
-      - DIRECT
-
 rules:
   - RULE-SET,private,DIRECT
   - RULE-SET,privateip,DIRECT,no-resolve
@@ -156,7 +148,7 @@ rules:
   - RULE-SET,proxy,🧱 国外网站 & 漏网之鱼
   - RULE-SET,cn,🇨🇳 大陆网站
   - RULE-SET,cnip,🇨🇳 大陆网站
-  - MATCH,🧱 国外网站 & 漏网之鱼
+  - MATCH,🚀 主力
 
 rule-providers:
   private:
