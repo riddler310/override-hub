@@ -145,7 +145,6 @@ rules:
   
   # ---------------
 
-  - RULE-SET,proxy,🧱 国外网站 & 漏网之鱼
   - RULE-SET,cn,🇨🇳 大陆网站
   - RULE-SET,cnip,🇨🇳 大陆网站
   - MATCH,🚀 主力
