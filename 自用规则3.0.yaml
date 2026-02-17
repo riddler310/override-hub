@@ -139,7 +139,21 @@ rules:
   - RULE-SET,ads,🛑 广告
   
   # --- 分流规则 ---
-  
+    # ==========================================
+  # 1. Gemini 专属规则 -> 强制走 Google 组
+  # ==========================================
+  # 网页前端
+  - DOMAIN-SUFFIX,gemini.google.com,🔍 Google
+  # 核心对话 API (必须加，否则对话时会乱飘)
+  - DOMAIN,alkalimakersuite-pa.clients6.google.com,🔍 Google
+  # 开发接口
+  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,🔍 Google
+  # 图片生成/上传
+  - DOMAIN-SUFFIX,ogq360.googleusercontent.com,🔍 Google
+  # 移动端及后端
+  - DOMAIN-SUFFIX,proactivebackend-pa.googleapis.com,🔍 Google
+  # 旧版跳转
+  - DOMAIN-SUFFIX,bard.google.com,🔍 Google
   - RULE-SET,netflix,🎥 Netflix
   - RULE-SET,youtube,📹 YouTube
   - DOMAIN-SUFFIX,grok.com,🤖 AI
