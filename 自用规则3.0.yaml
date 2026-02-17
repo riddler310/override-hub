@@ -142,9 +142,6 @@ rules:
   
   - RULE-SET,netflix,🎥 Netflix
   - RULE-SET,youtube,📹 YouTube
-  - DOMAIN-SUFFIX,gemini.google.com,🔍 Google
-  - DOMAIN-SUFFIX,ai.google.dev,🔍 Google
-  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,🔍 Google
   - DOMAIN-SUFFIX,grok.com,🤖 AI
   - DOMAIN-SUFFIX,x.ai,🤖 AI
   - DOMAIN-SUFFIX,perplexity.ai,🤖 AI
