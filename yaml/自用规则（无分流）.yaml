@@ -150,7 +150,9 @@ rules:
   - DOMAIN-SUFFIX,perplexity.ai,🤖 AI
   - RULE-SET,ai,🤖 AI
   # ---------------
-
+  - DOMAIN-SUFFIX,steamcontent.com,DIRECT
+  - DOMAIN-SUFFIX,steamstatic.com,DIRECT
+  - DOMAIN-KEYWORD,steamcdn,DIRECT
   - RULE-SET,proxy,🧱 国外网站 & 漏网之鱼
   - RULE-SET,cn,🇨🇳 大陆网站
   - RULE-SET,cnip,🇨🇳 大陆网站
