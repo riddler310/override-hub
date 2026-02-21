@@ -140,7 +140,9 @@ rules:
   
 
   # --- 分流规则 ---
-  
+  - DOMAIN-SUFFIX,steamcontent.com,DIRECT
+  - DOMAIN-SUFFIX,steamstatic.com,DIRECT
+  - DOMAIN-KEYWORD,steamcdn,DIRECT
   - RULE-SET,netflix,🎥 Netflix
   - RULE-SET,youtube,📹 YouTube
   #- RULE-SET,google,🔍 Google
