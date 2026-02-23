@@ -85,24 +85,32 @@ proxy-groups:
     interval: 0
     url: *url
     include-all: true
+    proxies:
+      - 🚀 主力
     
   - name: 🎥 Netflix
     type: select
     interval: 0
     url: *url
     include-all: true
+    proxies:
+      - 🚀 主力
 
   - name: 📹 YouTube
     type: select
     interval: 0
     url: *url
     include-all: true
+    proxies:
+      - 🚀 主力
 
   - name: 🔍 Google
     type: select
     interval: 0
     url: *url
     include-all: true
+    proxies:
+      - 🚀 主力
 
   # --- 其他分流 ---
   - name: 🇨🇳 大陆网站
@@ -137,7 +145,6 @@ rules:
   - DOMAIN,data.bilibili.com,🛑 广告
   - DOMAIN,dataflow.bilibili.com,🛑 广告
   - RULE-SET,ads,🛑 广告
-  
   
   # --- 分流规则 ---
   
@@ -210,4 +217,3 @@ rule-providers:
     interval: 86400
     path: ./rules/cnip.mrs
     url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/cnip.mrs"
-
