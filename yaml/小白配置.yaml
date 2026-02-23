@@ -1,0 +1,162 @@
+mode: rule
+ipv6: true
+allow-lan: false
+log-level: info
+mixed-port: 12345
+unified-delay: true
+tcp-concurrent: true
+external-controller: 127.0.0.1:9090
+find-process-mode: strict
+global-client-fingerprint: firefox
+geodata-mode: false
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+hosts:
+  time.facebook.com: 17.253.84.125
+  time.android.com: 17.253.84.125
+
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - "Mijia Cloud"
+    - "+.push.apple.com"
+
+dns:
+  enable: true
+  ipv6: true
+  prefer-h3: true
+  respect-rules: true
+  enhanced-mode: fake-ip
+  fake-ip-filter:
+    - rule-set,cn
+    - rule-set,fakeip-filter
+  default-nameserver: &cn
+    - quic://223.5.5.5
+    - quic://223.6.6.6
+  nameserver:
+    # 如果常用 TCP 协议的节点，如 vless、trojan 等
+    # 不包含没开 udp over tcp 的 ss！！！
+    # 请将此字段下未注释的行替换为如下内容
+     - tcp://8.8.8.8
+     - tcp://8.8.4.4
+    #- 8.8.8.8
+    #- 8.8.4.4
+  proxy-server-nameserver: *cn
+  direct-nameserver: *cn
+  nameserver-policy:
+    rule-set:cn: *cn
+
+tun:
+  enable: true
+  stack: system
+  device: utun-akasha
+  gso: true
+  dns-hijack:
+    - "any:53"
+    - "tcp://any:53"
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+
+proxy-groups:
+  # --- 主力节点组 (包含所有节点) ---
+  - name: 🚀 主力
+    type: select
+    interval: 0
+    url: &url http://www.gstatic.com/generate_204
+    include-all: true
+    proxies:
+      - DIRECT
+
+  
+  # --- 其他分流 ---
+  - name: 🇨🇳 大陆网站
+    type: select
+    interval: 0
+    proxies:
+      - DIRECT
+      - 🚀 主力
+
+  - name: 🛑 广告
+    type: select
+    interval: 0
+    url: *url
+    proxies:
+      - REJECT
+      - REJECT-DROP
+      - DIRECT
+      - 🚀 主力
+
+  - name: 🧱 国外网站 & 漏网之鱼
+    type: select
+    interval: 0
+    url: *url
+    proxies:
+      - 🚀 主力
+      - DIRECT
+
+rules:
+  - RULE-SET,private,DIRECT
+  - RULE-SET,privateip,DIRECT,no-resolve
+  - AND,((NETWORK,UDP),(DST-PORT,443)),REJECT
+  - DOMAIN,data.bilibili.com,🛑 广告
+  - DOMAIN,dataflow.bilibili.com,🛑 广告
+  - RULE-SET,ads,🛑 广告
+  
+
+  # ---------------
+  - DOMAIN-SUFFIX,steamcontent.com,DIRECT
+  - DOMAIN-SUFFIX,steamstatic.com,DIRECT
+  - DOMAIN-KEYWORD,steamcdn,DIRECT
+  - RULE-SET,proxy,🧱 国外网站 & 漏网之鱼
+  - RULE-SET,cn,🇨🇳 大陆网站
+  - RULE-SET,cnip,🇨🇳 大陆网站
+  - MATCH,🧱 国外网站 & 漏网之鱼
+
+rule-providers:
+  private:
+    <<: &r
+      type: http
+      behavior: domain
+      format: mrs
+      interval: 86400
+    path: ./rules/private.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/private.mrs"
+  privateip:
+    <<: *r
+    path: ./rules/privateip.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/privateip.mrs"
+  fakeip-filter:
+    <<: *r
+    path: ./rules/fakeip-filter.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/fakeip-filter.mrs"
+  ads:
+    <<: *r
+    path: ./rules/ads.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/ads.mrs"
+  proxy:
+    <<: *r
+    path: ./rules/proxy.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/proxy.mrs"
+  cn:
+    <<: *r
+    path: ./rules/cn.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/cn.mrs"
+  cnip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    interval: 86400
+    path: ./rules/cnip.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/cnip.mrs"
