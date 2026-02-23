@@ -85,24 +85,32 @@ proxy-groups:
     interval: 0
     url: *url
     include-all: true
+    proxies:
+      - 🚀 主力
     
   - name: 🎥 Netflix
     type: select
     interval: 0
     url: *url
     include-all: true
+    proxies:
+      - 🚀 主力
 
   - name: 📹 YouTube
     type: select
     interval: 0
     url: *url
     include-all: true
+    proxies:
+      - 🚀 主力
 
   - name: 🔍 Google
     type: select
     interval: 0
     url: *url
     include-all: true
+    proxies:
+      - 🚀 主力
 
   # --- 其他分流 ---
   - name: 🇨🇳 大陆网站
