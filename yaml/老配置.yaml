@@ -19,14 +19,12 @@ proxy-groups:
   - name: AI
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png
     type: select
-    proxies:
-      - 主力
+    include-all: true
 
   - name: Google
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
     type: select
-    proxies:
-      - 主力
+    include-all: true
 
   - name: Netflix
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
