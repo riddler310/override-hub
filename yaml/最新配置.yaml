@@ -111,7 +111,6 @@ proxy-groups:
       - DIRECT
 rules:
   - "RULE-SET,private,DIRECT"
-  - "RULE-SET,privateip,DIRECT,no-resolve"
   - "RULE-SET,category-ads-all,🛑 广告"
   - "RULE-SET,youtube,📹 油管视频"
   - "RULE-SET,google,🔍 谷歌服务"
