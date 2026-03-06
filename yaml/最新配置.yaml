@@ -110,6 +110,8 @@ proxy-groups:
       - 🚀 主力
       - DIRECT
 rules:
+  - "RULE-SET,private,DIRECT"
+  - "RULE-SET,privateip,DIRECT,no-resolve"
   - "RULE-SET,category-ads-all,🛑 广告"
   - "RULE-SET,youtube,📹 油管视频"
   - "RULE-SET,google,🔍 谷歌服务"
@@ -175,6 +177,13 @@ rule-providers:
     behavior: ipcidr
     url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/google.mrs"
     path: ./ruleset/google-ip.mrs
+    interval: 86400
+  private:
+    type: http
+    format: mrs
+    behavior: ipcidr
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/private.mrs"
+    path: ./ruleset/private.mrs
     interval: 86400
   geolocation-cn:
     type: http
