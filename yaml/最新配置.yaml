@@ -38,13 +38,6 @@ proxy-groups:
     include-all: true
     proxies:
       - DIRECT
-  - name: 🤖 AI 服务
-    type: select
-    interval: 0
-    url: *url
-    include-all: true
-    proxies:
-      - 🚀 主力
   - name: 📹 油管视频
     type: select
     interval: 0
@@ -53,6 +46,13 @@ proxy-groups:
     proxies:
       - 🚀 主力
   - name: 🔍 谷歌服务
+    type: select
+    interval: 0
+    url: *url
+    include-all: true
+    proxies:
+      - 🚀 主力
+  - name: 🤖 AI 服务
     type: select
     interval: 0
     url: *url
@@ -111,12 +111,10 @@ proxy-groups:
       - DIRECT
 rules:
   - "RULE-SET,category-ads-all,🛑 广告"
-  - "RULE-SET,category-ai-!cn,🤖 AI 服务"
-  - "RULE-SET,openai,🤖 AI 服务"
   - "RULE-SET,youtube,📹 油管视频"
   - "RULE-SET,google,🔍 谷歌服务"
-  - "RULE-SET,geolocation-cn,🔒 国内服务"
-  - "RULE-SET,cn-domains,🔒 国内服务"
+  - "RULE-SET,category-ai-!cn,🤖 AI 服务"
+  - "RULE-SET,openai,🤖 AI 服务"
   - "RULE-SET,telegram,📲 电报消息"
   - "RULE-SET,netflix,🎬 流媒体"
   - "RULE-SET,hulu,🎬 流媒体"
@@ -127,6 +125,8 @@ rules:
   - "RULE-SET,tiktok,🎶 Tiktok"
   - "RULE-SET,spotify,🎵 Spotify"
   - "RULE-SET,google-ip,🔍 谷歌服务,no-resolve"
+  - "RULE-SET,geolocation-cn,🔒 国内服务"
+  - "RULE-SET,cn-domains,🔒 国内服务"
   - "RULE-SET,cn,🔒 国内服务,no-resolve"
   - "RULE-SET,telegram-ip,📲 电报消息,no-resolve"
   - "MATCH,🐟 漏网之鱼"
