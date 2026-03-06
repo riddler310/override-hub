@@ -129,9 +129,9 @@ rules:
   - "RULE-SET,google-ip,🔍 谷歌服务,no-resolve"
   - "RULE-SET,cn,🔒 国内服务,no-resolve"
   - "RULE-SET,telegram-ip,📲 电报消息,no-resolve"
-  - DOMAIN-SUFFIX,steamcontent.com,DIRECT
-  - DOMAIN-SUFFIX,steamstatic.com,DIRECT
-  - DOMAIN-KEYWORD,steamcdn,DIRECT
+  - "DOMAIN-SUFFIX,steamcontent.com,DIRECT"
+  - "DOMAIN-SUFFIX,steamstatic.com,DIRECT"
+  - "DOMAIN-KEYWORD,steamcdn,DIRECT"
   - "MATCH,🐟 漏网之鱼"
 rule-providers:
   category-ads-all:
