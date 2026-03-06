@@ -66,6 +66,13 @@ proxy-groups:
     include-all: true
     proxies:
       - 🚀 主力
+  - name: 🎬 流媒体
+    type: select
+    interval: 0
+    url: *url
+    include-all: true
+    proxies:
+      - 🚀 主力
   - name: 🎶 Tiktok
     type: select
     interval: 0
@@ -111,6 +118,12 @@ rules:
   - "RULE-SET,geolocation-cn,🔒 国内服务"
   - "RULE-SET,cn-domains,🔒 国内服务"
   - "RULE-SET,telegram,📲 电报消息"
+  - "RULE-SET,netflix,🎬 流媒体"
+  - "RULE-SET,hulu,🎬 流媒体"
+  - "RULE-SET,disney,🎬 流媒体"
+  - "RULE-SET,hbo,🎬 流媒体"
+  - "RULE-SET,amazon,🎬 流媒体"
+  - "RULE-SET,bahamut,🎬 流媒体"
   - "RULE-SET,tiktok,🎶 Tiktok"
   - "RULE-SET,spotify,🎵 Spotify"
   - "RULE-SET,google-ip,🔍 谷歌服务,no-resolve"
@@ -194,6 +207,48 @@ rule-providers:
     behavior: ipcidr
     url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.mrs"
     path: ./ruleset/telegram.mrs
+    interval: 86400
+  netflix:
+    type: http
+    format: mrs
+    behavior: domain
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/netflix.mrs"
+    path: ./ruleset/netflix.mrs
+    interval: 86400
+  hulu:
+    type: http
+    format: mrs
+    behavior: domain
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/hulu.mrs"
+    path: ./ruleset/hulu.mrs
+    interval: 86400
+  disney:
+    type: http
+    format: mrs
+    behavior: domain
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/disney.mrs"
+    path: ./ruleset/disney.mrs
+    interval: 86400
+  hbo:
+    type: http
+    format: mrs
+    behavior: domain
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/hbo.mrs"
+    path: ./ruleset/hbo.mrs
+    interval: 86400
+  amazon:
+    type: http
+    format: mrs
+    behavior: domain
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/amazon.mrs"
+    path: ./ruleset/amazon.mrs
+    interval: 86400
+  bahamut:
+    type: http
+    format: mrs
+    behavior: domain
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bahamut.mrs"
+    path: ./ruleset/bahamut.mrs
     interval: 86400
   tiktok:
     type: http
