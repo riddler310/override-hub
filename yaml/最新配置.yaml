@@ -152,8 +152,7 @@ proxy-groups:
       - 🚀 主力
       - DIRECT
 rules:
-  - "RULE-SET,private,DIRECT"
-  - "RULE-SET,privateip,DIRECT,no-resolve"
+  - "RULE-SET,private,DIRECT,no-resolve"
   - "AND,((NETWORK,UDP),(DST-PORT,443)),REJECT"
   - "RULE-SET,category-ads-all,🛑 广告"
   - "RULE-SET,youtube,📹 油管视频"
