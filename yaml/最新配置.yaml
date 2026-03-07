@@ -73,7 +73,7 @@ tun:
   auto-redirect: true
   auto-detect-interface: true
 proxy-groups:
-  - name: 🚀 主力
+  - name: 主力
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
     type: select
     interval: 0
@@ -88,71 +88,71 @@ proxy-groups:
     url: *url
     include-all: true
     proxies:
-      - 🚀 主力
-  - name: 📹 油管视频
+      - 主力
+  - name: 油管视频
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
     type: select
     interval: 0
     url: *url
     include-all: true
     proxies:
-      - 🚀 主力
-  - name: 🔍 谷歌服务
+      - 主力
+  - name: 谷歌服务
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google_Search.png
     type: select
     interval: 0
     url: *url
     include-all: true
     proxies:
-      - 🚀 主力
-  - name: 🤖 AI 服务
+      - 主力
+  - name: AI 服务
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png
     type: select
     interval: 0
     url: *url
     include-all: true
     proxies:
-      - 🚀 主力
-  - name: 📲 电报消息
+      - 主力
+  - name: 电报消息
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png
     type: select
     interval: 0
     url: *url
     include-all: true
     proxies:
-      - 🚀 主力
-  - name: 🎬 流媒体
+      - 主力
+  - name: 流媒体
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
     type: select
     interval: 0
     url: *url
     include-all: true
     proxies:
-      - 🚀 主力
-  - name: 🎶 Tiktok
+      - 主力
+  - name: Tiktok
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png
     type: select
     interval: 0
     url: *url
     include-all: true
     proxies:
-      - 🚀 主力
-  - name: 🎵 Spotify
+      - 主力
+  - name: Spotify
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Spotify.png
     type: select
     interval: 0
     url: *url
     include-all: true
     proxies:
-      - 🚀 主力
-  - name: 🔒 国内服务
+      - 主力
+  - name: 国内服务
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/DomesticMedia.png
     type: select
     interval: 0
     proxies:
       - DIRECT
-      - 🚀 主力
-  - name: 🛑 广告
+      - 主力
+  - name: 广告
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png
     type: select
     interval: 0
@@ -161,44 +161,44 @@ proxy-groups:
       - REJECT
       - REJECT-DROP
       - DIRECT
-      - 🚀 主力
-  - name: 🐟 漏网之鱼
+      - 主力
+  - name: 漏网之鱼
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png
     type: select
     interval: 0
     url: *url
     proxies:
-      - 🚀 主力
+      - 主力
       - DIRECT
 rules:
   - "RULE-SET,private,DIRECT"
   - "RULE-SET,privateip,DIRECT,no-resolve"
   - "AND,((NETWORK,UDP),(DST-PORT,443)),REJECT"
-  - "RULE-SET,category-ads-all,🛑 广告"
-  - "DOMAIN-SUFFIX,nodeseek.com,💬 Nodeseek"
-  - "RULE-SET,youtube,📹 油管视频"
-  - "RULE-SET,google,🔍 谷歌服务"
-  - "RULE-SET,geolocation-cn,🔒 国内服务"
-  - "RULE-SET,cn,🔒 国内服务"
-  - "RULE-SET,category-ai-!cn,🤖 AI 服务"
-  - "RULE-SET,openai,🤖 AI 服务"
-  - "RULE-SET,telegram,📲 电报消息"
-  - "RULE-SET,netflix,🎬 流媒体"
-  - "RULE-SET,hulu,🎬 流媒体"
-  - "RULE-SET,disney,🎬 流媒体"
-  - "RULE-SET,hbo,🎬 流媒体"
-  - "RULE-SET,amazon,🎬 流媒体"
-  - "RULE-SET,bahamut,🎬 流媒体"
-  - "RULE-SET,tiktok,🎶 Tiktok"
-  - "RULE-SET,spotify,🎵 Spotify"
-  - "RULE-SET,google-ip,🔍 谷歌服务,no-resolve"
-  - "RULE-SET,proxy,🐟 漏网之鱼"
-  - "RULE-SET,cnip,🔒 国内服务,no-resolve"
-  - "RULE-SET,telegram-ip,📲 电报消息,no-resolve"
+  - "RULE-SET,category-ads-all,广告"
+  - "DOMAIN-SUFFIX,nodeseek.com,Nodeseek"
+  - "RULE-SET,youtube,油管视频"
+  - "RULE-SET,google,谷歌服务"
+  - "RULE-SET,geolocation-cn,国内服务"
+  - "RULE-SET,cn,国内服务"
+  - "RULE-SET,category-ai-!cn,AI 服务"
+  - "RULE-SET,openai,AI 服务"
+  - "RULE-SET,telegram,电报消息"
+  - "RULE-SET,netflix,流媒体"
+  - "RULE-SET,hulu,流媒体"
+  - "RULE-SET,disney,流媒体"
+  - "RULE-SET,hbo,流媒体"
+  - "RULE-SET,amazon,流媒体"
+  - "RULE-SET,bahamut,流媒体"
+  - "RULE-SET,tiktok,Tiktok"
+  - "RULE-SET,spotify,Spotify"
+  - "RULE-SET,google-ip,谷歌服务,no-resolve"
+  - "RULE-SET,proxy,漏网之鱼"
+  - "RULE-SET,cnip,国内服务,no-resolve"
+  - "RULE-SET,telegram-ip,电报消息,no-resolve"
   - "DOMAIN-SUFFIX,steamcontent.com,DIRECT"
   - "DOMAIN-SUFFIX,steamstatic.com,DIRECT"
   - "DOMAIN-KEYWORD,steamcdn,DIRECT"
-  - "MATCH,🐟 漏网之鱼"
+  - "MATCH,漏网之鱼"
 rule-providers:
   category-ads-all:
     type: http
