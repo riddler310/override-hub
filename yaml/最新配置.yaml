@@ -172,6 +172,7 @@ rules:
   - "RULE-SET,tiktok,🎶 Tiktok"
   - "RULE-SET,spotify,🎵 Spotify"
   - "RULE-SET,google-ip,🔍 谷歌服务,no-resolve"
+  - "RULE-SET,proxy,🐟 漏网之鱼"
   - "RULE-SET,cnip,🔒 国内服务,no-resolve"
   - "RULE-SET,telegram-ip,📲 电报消息,no-resolve"
   - "DOMAIN-SUFFIX,steamcontent.com,DIRECT"
@@ -244,20 +245,21 @@ rule-providers:
     url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/geolocation-cn.mrs"
     path: ./ruleset/geolocation-cn.mrs
     interval: 86400
+  proxy:
+    <<: *r
+    path: ./rules/proxy.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/proxy.mrs"
   cn:
-    type: http
-    format: mrs
-    behavior: domain
-    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/cn.mrs"
-    path: ./ruleset/cn-domains.mrs
-    interval: 86400
+    <<: *r
+    path: ./rules/cn.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/cn.mrs"
   cnip:
     type: http
-    format: mrs
     behavior: ipcidr
-    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/cn.mrs"
-    path: ./ruleset/cn.mrs
+    format: mrs
     interval: 86400
+    path: ./rules/cnip.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/cnip.mrs"
   telegram:
     type: http
     format: mrs
