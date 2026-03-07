@@ -174,8 +174,6 @@ rules:
   - "RULE-SET,private,DIRECT"
   - "RULE-SET,privateip,DIRECT,no-resolve"
   - "AND,((NETWORK,UDP),(DST-PORT,443)),REJECT"
-  - "DOMAIN,data.bilibili.com,🛑 广告"
-  - "DOMAIN,dataflow.bilibili.com,🛑 广告"
   - "RULE-SET,category-ads-all,🛑 广告"
   - "RULE-SET,youtube,📹 油管视频"
   - "RULE-SET,google,🔍 谷歌服务"
@@ -207,13 +205,6 @@ rule-providers:
     url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ads-all.mrs"
     path: ./ruleset/category-ads-all.mrs
     interval: 86400
-  category-ai-!cn:
-    type: http
-    format: mrs
-    behavior: domain
-    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs"
-    path: ./ruleset/category-ai-!cn.mrs
-    interval: 86400
   private:
     type: http
     format: mrs
@@ -227,6 +218,13 @@ rule-providers:
     behavior: ipcidr
     url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/private.mrs"
     path: ./ruleset/privateip.mrs
+    interval: 86400
+  category-ai-!cn:
+    type: http
+    format: mrs
+    behavior: domain
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs"
+    path: ./ruleset/category-ai-!cn.mrs
     interval: 86400
   openai:
     type: http
