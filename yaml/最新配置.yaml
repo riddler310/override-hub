@@ -1,12 +1,73 @@
-port: 7890
-socks-port: 7891
-allow-lan: false
 mode: rule
+ipv6: true
+allow-lan: false
 log-level: info
-geodata-mode: true
-geo-auto-update: true
-geodata-loader: standard
-geo-update-interval: 24
+mixed-port: 12345
+unified-delay: true
+tcp-concurrent: true
+external-controller: 127.0.0.1:9090
+find-process-mode: strict
+global-client-fingerprint: firefox
+geodata-mode: false
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+hosts:
+  time.facebook.com: 17.253.84.125
+  time.android.com: 17.253.84.125
+
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - "Mijia Cloud"
+    - "+.push.apple.com"
+
+dns:
+  enable: true
+  ipv6: true
+  prefer-h3: true
+  respect-rules: true
+  enhanced-mode: fake-ip
+  fake-ip-filter:
+    - rule-set,cn
+    - rule-set,fakeip-filter
+  default-nameserver: &cn
+    - quic://223.5.5.5
+    - quic://223.6.6.6
+  nameserver:
+    # 如果常用 TCP 协议的节点，如 vless、trojan 等
+    # 不包含没开 udp over tcp 的 ss！！！
+    # 请将此字段下未注释的行替换为如下内容
+     - tcp://8.8.8.8
+     - tcp://8.8.4.4
+    #- 8.8.8.8
+    #- 8.8.4.4
+  proxy-server-nameserver: *cn
+  direct-nameserver: *cn
+  nameserver-policy:
+    rule-set:cn: *cn
+
+tun:
+  enable: true
+  stack: system
+  device: utun-akasha
+  gso: true
+  dns-hijack:
+    - "any:53"
+    - "tcp://any:53"
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
 geox-url:
   geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
   geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
@@ -110,8 +171,12 @@ proxy-groups:
       - 🚀 主力
       - DIRECT
 rules:
-  - "RULE-SET,private,DIRECT"
-  - "RULE-SET,category-ads-all,🛑 广告"
+  - RULE-SET,private,DIRECT
+  - RULE-SET,privateip,DIRECT,no-resolve
+  - AND,((NETWORK,UDP),(DST-PORT,443)),REJECT
+  - DOMAIN,data.bilibili.com,🛑 广告
+  - DOMAIN,dataflow.bilibili.com,🛑 广告
+  - RULE-SET,ads,🛑 广告
   - "RULE-SET,youtube,📹 油管视频"
   - "RULE-SET,google,🔍 谷歌服务"
   - "RULE-SET,category-ai-!cn,🤖 AI 服务"
@@ -181,8 +246,15 @@ rule-providers:
     type: http
     format: mrs
     behavior: ipcidr
-    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/private.mrs"
-    path: ./ruleset/private.mrs
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/private.mrs"
+    path: ./rules/private.mrs
+    interval: 86400
+  privateip:
+    type: http
+    format: mrs
+    behavior: ipcidr
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/privateip.mrs"
+    path: ./rules/privateip.mrs
     interval: 86400
   geolocation-cn:
     type: http
