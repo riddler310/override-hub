@@ -74,13 +74,23 @@ tun:
   auto-detect-interface: true
 proxy-groups:
   - name: 🚀 主力
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
     type: select
     interval: 0
     url: &url http://www.gstatic.com/generate_204
     include-all: true
     proxies:
       - DIRECT
+  - name: 💬 Nodeseek
+    icon: https://testingcf.jsdelivr.net/gh/shindgewongxj/WHATSINStash@master/icon/select.png
+    type: select
+    interval: 0
+    url: *url
+    include-all: true
+    proxies:
+      - 🚀 主力
   - name: 📹 油管视频
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
     type: select
     interval: 0
     url: *url
@@ -88,6 +98,7 @@ proxy-groups:
     proxies:
       - 🚀 主力
   - name: 🔍 谷歌服务
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google_Search.png
     type: select
     interval: 0
     url: *url
@@ -95,6 +106,7 @@ proxy-groups:
     proxies:
       - 🚀 主力
   - name: 🤖 AI 服务
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png
     type: select
     interval: 0
     url: *url
@@ -102,6 +114,7 @@ proxy-groups:
     proxies:
       - 🚀 主力
   - name: 📲 电报消息
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png
     type: select
     interval: 0
     url: *url
@@ -109,6 +122,7 @@ proxy-groups:
     proxies:
       - 🚀 主力
   - name: 🎬 流媒体
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
     type: select
     interval: 0
     url: *url
@@ -116,6 +130,7 @@ proxy-groups:
     proxies:
       - 🚀 主力
   - name: 🎶 Tiktok
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png
     type: select
     interval: 0
     url: *url
@@ -123,6 +138,7 @@ proxy-groups:
     proxies:
       - 🚀 主力
   - name: 🎵 Spotify
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Spotify.png
     type: select
     interval: 0
     url: *url
@@ -130,12 +146,14 @@ proxy-groups:
     proxies:
       - 🚀 主力
   - name: 🔒 国内服务
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/DomesticMedia.png
     type: select
     interval: 0
     proxies:
       - DIRECT
       - 🚀 主力
   - name: 🛑 广告
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png
     type: select
     interval: 0
     url: *url
@@ -145,6 +163,7 @@ proxy-groups:
       - DIRECT
       - 🚀 主力
   - name: 🐟 漏网之鱼
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png
     type: select
     interval: 0
     url: *url
@@ -156,6 +175,7 @@ rules:
   - "RULE-SET,privateip,DIRECT,no-resolve"
   - "AND,((NETWORK,UDP),(DST-PORT,443)),REJECT"
   - "RULE-SET,category-ads-all,🛑 广告"
+  - "DOMAIN-SUFFIX,nodeseek.com,💬 Nodeseek"
   - "RULE-SET,youtube,📹 油管视频"
   - "RULE-SET,google,🔍 谷歌服务"
   - "RULE-SET,geolocation-cn,🔒 国内服务"
