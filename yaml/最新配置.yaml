@@ -81,7 +81,7 @@ proxy-groups:
     include-all: true
     proxies:
       - DIRECT
-  - name: 💬 Nodeseek
+  - name: Nodeseek
     icon: https://testingcf.jsdelivr.net/gh/shindgewongxj/WHATSINStash@master/icon/select.png
     type: select
     interval: 0
