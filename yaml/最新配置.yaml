@@ -176,7 +176,7 @@ rules:
   - "AND,((NETWORK,UDP),(DST-PORT,443)),REJECT"
   - "DOMAIN,data.bilibili.com,🛑 广告"
   - "DOMAIN,dataflow.bilibili.com,🛑 广告"
-  - "RULE-SET,ads,🛑 广告"
+  - "RULE-SET,category-ads-all,🛑 广告"
   - "RULE-SET,youtube,📹 油管视频"
   - "RULE-SET,google,🔍 谷歌服务"
   - "RULE-SET,category-ai-!cn,🤖 AI 服务"
@@ -215,25 +215,19 @@ rule-providers:
     path: ./ruleset/category-ai-!cn.mrs
     interval: 86400
   private:
-    <<: &r
-      type: http
-      behavior: domain
-      format: mrs
-      interval: 86400
-    path: ./rules/private.mrs
-    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/private.mrs"
+    type: http
+    format: mrs
+    behavior: domain
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/private.mrs"
+    path: ./ruleset/private.mrs
+    interval: 86400
   privateip:
-    <<: *r
-    path: ./rules/privateip.mrs
-    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/privateip.mrs
-  ads:
-    <<: *r
-    path: ./rules/ads.mrs
-    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/ads.mrs
-  fakeip-filter:
-    <<: *r
-    path: ./rules/fakeip-filter.mrs
-    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/fakeip-filter.mrs"
+    type: http
+    format: mrs
+    behavior: ipcidr
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/private.mrs"
+    path: ./ruleset/privateip.mrs
+    interval: 86400
   openai:
     type: http
     format: mrs
