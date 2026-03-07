@@ -177,6 +177,8 @@ rules:
   - "RULE-SET,category-ads-all,🛑 广告"
   - "RULE-SET,youtube,📹 油管视频"
   - "RULE-SET,google,🔍 谷歌服务"
+  - "RULE-SET,geolocation-cn,🔒 国内服务"
+  - "RULE-SET,cn-domains,🔒 国内服务"
   - "RULE-SET,category-ai-!cn,🤖 AI 服务"
   - "RULE-SET,openai,🤖 AI 服务"
   - "RULE-SET,telegram,📲 电报消息"
@@ -188,8 +190,6 @@ rules:
   - "RULE-SET,bahamut,🎬 流媒体"
   - "RULE-SET,tiktok,🎶 Tiktok"
   - "RULE-SET,spotify,🎵 Spotify"
-  - "RULE-SET,geolocation-cn,🔒 国内服务"
-  - "RULE-SET,cn-domains,🔒 国内服务"
   - "RULE-SET,google-ip,🔍 谷歌服务,no-resolve"
   - "RULE-SET,cn,🔒 国内服务,no-resolve"
   - "RULE-SET,telegram-ip,📲 电报消息,no-resolve"
@@ -204,20 +204,6 @@ rule-providers:
     behavior: domain
     url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ads-all.mrs"
     path: ./ruleset/category-ads-all.mrs
-    interval: 86400
-  private:
-    type: http
-    format: mrs
-    behavior: domain
-    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/private.mrs"
-    path: ./ruleset/private.mrs
-    interval: 86400
-  privateip:
-    type: http
-    format: mrs
-    behavior: ipcidr
-    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/private.mrs"
-    path: ./ruleset/privateip.mrs
     interval: 86400
   category-ai-!cn:
     type: http
@@ -253,6 +239,13 @@ rule-providers:
     behavior: ipcidr
     url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/google.mrs"
     path: ./ruleset/google-ip.mrs
+    interval: 86400
+  private:
+    type: http
+    format: mrs
+    behavior: ipcidr
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/private.mrs"
+    path: ./ruleset/private.mrs
     interval: 86400
   geolocation-cn:
     type: http
