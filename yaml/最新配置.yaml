@@ -171,12 +171,12 @@ proxy-groups:
       - 🚀 主力
       - DIRECT
 rules:
-  - RULE-SET,private,DIRECT
-  - RULE-SET,privateip,DIRECT,no-resolve
-  - AND,((NETWORK,UDP),(DST-PORT,443)),REJECT
-  - DOMAIN,data.bilibili.com,🛑 广告
-  - DOMAIN,dataflow.bilibili.com,🛑 广告
-  - RULE-SET,ads,🛑 广告
+  - "RULE-SET,private,DIRECT"
+  - "RULE-SET,privateip,DIRECT,no-resolve"
+  - "AND,((NETWORK,UDP),(DST-PORT,443)),REJECT"
+  - "DOMAIN,data.bilibili.com,🛑 广告"
+  - "DOMAIN,dataflow.bilibili.com,🛑 广告"
+  - "RULE-SET,ads,🛑 广告"
   - "RULE-SET,youtube,📹 油管视频"
   - "RULE-SET,google,🔍 谷歌服务"
   - "RULE-SET,category-ai-!cn,🤖 AI 服务"
