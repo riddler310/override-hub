@@ -1,0 +1,560 @@
+mode: rule
+
+ipv6: false
+
+allow-lan: false
+
+log-level: info
+
+mixed-port: 12345
+
+unified-delay: true
+
+tcp-concurrent: true
+
+external-controller: 127.0.0.1:9090
+
+find-process-mode: strict
+
+global-client-fingerprint: chrome
+
+geodata-mode: true
+
+geox-url:
+  geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
+
+  geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
+
+  mmdb: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb"
+
+  asn: "https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb"
+
+profile:
+  store-selected: true
+
+  store-fake-ip: true
+
+hosts:
+  "time.facebook.com": 17.253.84.125
+
+  "time.android.com": 17.253.84.125
+
+sniffer:
+  enable: true
+
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+
+      override-destination: true
+
+    TLS:
+      ports: [443, 8443]
+
+    QUIC:
+      ports: [443, 8443]
+
+  skip-domain:
+    - "Mijia Cloud"
+
+    - "+.push.apple.com"
+
+dns:
+  enable: true
+
+  ipv6: true
+
+  prefer-h3: true
+
+  respect-rules: true
+
+  enhanced-mode: fake-ip
+
+  fake-ip-filter:
+    - rule-set,cn
+
+    - rule-set,fakeip-filter
+
+    # --- 新增：强制内网域名不走 Fake-IP ---
+
+    - "*.lan"
+
+    - "*.local"
+
+    - "localhost.ptlogin2.qq.com"
+
+    - "+.msftconnecttest.com"
+
+    - "+.msftncsi.com"
+
+
+  default-nameserver: &cn
+    - quic://223.5.5.5
+
+    - quic://223.6.6.6
+
+  nameserver:
+    - tcp://8.8.8.8
+
+    - tcp://8.8.4.4
+
+  proxy-server-nameserver: *cn
+
+  direct-nameserver: *cn
+
+  nameserver-policy:
+    "rule-set:cn": *cn
+
+tun:
+  enable: true
+
+  stack: system
+
+  device: utun-Riddler
+
+  gso: true
+
+  dns-hijack:
+    - "any:53"
+
+    - "tcp://any:53"
+
+  auto-route: true
+
+  auto-redirect: true
+
+  auto-detect-interface: true
+
+proxy-groups:
+  - name: 默认代理
+
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png
+
+    type: select
+
+    interval: 0
+
+    url: &url http://www.gstatic.com/generate_204
+
+    proxies:
+      - DIRECT
+  
+  - name: NS
+
+    icon: https://testingcf.jsdelivr.net/gh/shindgewongxj/WHATSINStash@master/icon/select.png
+
+    type: select
+
+    interval: 0
+
+    url: *url
+
+    proxies:
+      - 默认代理
+
+  - name: 油管视频
+
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
+
+    type: select
+
+    interval: 0
+
+    url: *url
+
+    proxies:
+      - 默认代理
+
+  - name: 谷歌服务
+
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google_Search.png
+
+    type: select
+
+    interval: 0
+
+    url: *url
+
+    proxies:
+      - 默认代理
+
+  - name: AI 服务
+
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png
+
+    type: select
+
+    interval: 0
+
+    url: *url
+
+    proxies:
+      - 默认代理
+
+  - name: 电报消息
+
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png
+
+    type: select
+
+    interval: 0
+
+    url: *url
+
+    proxies:
+      - 默认代理
+
+  - name: 流媒体
+
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
+
+    type: select
+
+    interval: 0
+
+    url: *url
+
+    proxies:
+      - 默认代理
+
+  - name: Tiktok
+
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png
+
+    type: select
+
+    interval: 0
+
+    url: *url
+
+    proxies:
+      - 默认代理
+
+  - name: Spotify
+
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Spotify.png
+
+    type: select
+
+    interval: 0
+
+    url: *url
+
+    proxies:
+      - 默认代理
+
+  - name: 国内服务
+
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/DomesticMedia.png
+
+    type: select
+
+    interval: 0
+
+    proxies:
+      - DIRECT
+
+      - 默认代理
+
+  - name: 广告
+
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png
+
+    type: select
+
+    interval: 0
+
+    url: *url
+
+    proxies:
+      - REJECT
+
+      - REJECT-DROP
+
+      - DIRECT
+
+      - 默认代理
+
+  - name: 漏网之鱼
+
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png
+
+    type: select
+
+    interval: 0
+
+    url: *url
+
+    proxies:
+      - 默认代理
+
+      - DIRECT
+
+rules:
+  - "DOMAIN-SUFFIX,ywj310.top,DIRECT"
+
+  - "DOMAIN-SUFFIX,local,DIRECT"
+
+  - "DOMAIN-SUFFIX,lan,DIRECT"
+
+  - "IP-CIDR,192.168.0.0/16,DIRECT,no-resolve"
+
+  - "IP-CIDR,10.0.0.0/8,DIRECT,no-resolve"
+
+  - "IP-CIDR,172.16.0.0/12,DIRECT,no-resolve"
+
+  - "RULE-SET,private,DIRECT"
+
+  - "RULE-SET,privateip,DIRECT,no-resolve"
+
+  - "AND,((NETWORK,UDP),(DST-PORT,443)),REJECT"
+
+  - "RULE-SET,category-ads-all,广告"
+
+  - "DOMAIN-SUFFIX,steamcontent.com,DIRECT"
+
+  - "DOMAIN-SUFFIX,steamstatic.com,DIRECT"
+
+  - "DOMAIN-KEYWORD,steamcdn,DIRECT"
+
+  - "RULE-SET,youtube,油管视频"
+
+  - "RULE-SET,google,谷歌服务"
+
+  - "RULE-SET,geolocation-cn,国内服务"
+
+  - "RULE-SET,cn,国内服务"
+  
+  # Claude 核心域名及依赖服务
+  - "DOMAIN-SUFFIX,anthropic.com,AI 服务"
+  - "DOMAIN-SUFFIX,clau.de,AI 服务"
+  - "DOMAIN-SUFFIX,claude.ai,AI 服务"
+  - "DOMAIN-SUFFIX,claude.com,AI 服务"
+  - "DOMAIN-SUFFIX,claudemcpclient.com,AI 服务"
+  - "DOMAIN-SUFFIX,claudeusercontent.com,AI 服务"
+  - "DOMAIN-SUFFIX,servd-anthropic-website.b-cdn.net,AI 服务"
+  - "DOMAIN-SUFFIX,sentry.io,AI 服务"
+  - "DOMAIN-SUFFIX,statsigapi.net,AI 服务"
+  - "DOMAIN,cdn.anthropic.com,AI 服务"
+  - "DOMAIN,anthropic.auth0.com,AI 服务"
+  - "DOMAIN,anthropic-com.ghost.io,AI 服务"
+  - "DOMAIN,anthropic.com.cdn.cloudflare.net,AI 服务"
+  # 遥测、反欺诈探针与时间校准 (兜底)
+  - "GEOSITE,anthropic,AI 服务"
+  - "DOMAIN-KEYWORD,datadog,AI 服务"
+  - "DOMAIN-KEYWORD,sentry,AI 服务"
+  - "DOMAIN-KEYWORD,sift,AI 服务"
+  - "GEOSITE,category-ntp,AI 服务"
+
+  - "RULE-SET,category-ai-!cn,AI 服务"
+
+  - "RULE-SET,openai,AI 服务"
+
+  - "RULE-SET,telegram,电报消息"
+
+  - "RULE-SET,hbo,流媒体"
+
+  - "RULE-SET,netflix,流媒体"
+
+  - "RULE-SET,hulu,流媒体"
+
+  - "RULE-SET,disney,流媒体"
+
+  - "RULE-SET,amazon,流媒体"
+
+  - "RULE-SET,bahamut,流媒体"
+
+  - "RULE-SET,tiktok,Tiktok"
+
+  - "RULE-SET,spotify,Spotify"
+
+  - "RULE-SET,google-ip,谷歌服务,no-resolve"
+
+  - "DOMAIN-SUFFIX,nodeseek.com,NS"
+
+  - "RULE-SET,proxy,漏网之鱼"
+
+  - "RULE-SET,cnip,国内服务,no-resolve"
+
+  - "RULE-SET,telegram-ip,电报消息,no-resolve"
+
+  - "MATCH,漏网之鱼"
+
+# 定义一个供 rule-providers 复用的基础模板
+
+.provider_template: &provider_template
+  type: http
+
+  behavior: domain
+
+  format: mrs
+
+  interval: 86400
+
+rule-providers:
+  category-ads-all:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ads-all.mrs"
+
+    path: ./ruleset/category-ads-all.mrs
+
+  category-ai-!cn:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs"
+
+    path: ./ruleset/category-ai-!cn.mrs
+
+  openai:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/openai.mrs"
+
+    path: ./ruleset/openai.mrs
+
+  youtube:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/youtube.mrs"
+
+    path: ./ruleset/youtube.mrs
+
+  google:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google.mrs"
+
+    path: ./ruleset/google.mrs
+
+  google-ip:
+    <<: *provider_template
+
+    behavior: ipcidr
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/google.mrs"
+
+    path: ./ruleset/google-ip.mrs
+
+  private:
+    <<: *provider_template
+
+    path: ./rules/private.mrs
+
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/private.mrs"
+
+  privateip:
+    <<: *provider_template
+
+    path: ./rules/privateip.mrs
+
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/privateip.mrs"
+
+  fakeip-filter:
+    <<: *provider_template
+
+    path: ./rules/fakeip-filter.mrs
+
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/fakeip-filter.mrs"
+
+  geolocation-cn:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/geolocation-cn.mrs"
+
+    path: ./ruleset/geolocation-cn.mrs
+
+  proxy:
+    <<: *provider_template
+
+    path: ./rules/proxy.mrs
+
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/proxy.mrs"
+
+  cn:
+    <<: *provider_template
+
+    path: ./rules/cn.mrs
+
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/cn.mrs"
+
+  cnip:
+    <<: *provider_template
+
+    behavior: ipcidr
+
+    path: ./rules/cnip.mrs
+
+    url: "https://cdn.jsdmirror.com/gh/DustinWin/ruleset_geodata@mihomo-ruleset/cnip.mrs"
+
+  telegram:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/telegram.mrs"
+
+    path: ./ruleset/telegram.mrs
+
+  telegram-ip:
+    <<: *provider_template
+
+    behavior: ipcidr
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.mrs"
+
+    path: ./ruleset/telegram.mrs
+
+  netflix:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/netflix.mrs"
+
+    path: ./ruleset/netflix.mrs
+
+  hulu:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/hulu.mrs"
+
+    path: ./ruleset/hulu.mrs
+
+  disney:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/disney.mrs"
+
+    path: ./ruleset/disney.mrs
+
+  hbo:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/hbo.mrs"
+
+    path: ./ruleset/hbo.mrs
+
+  amazon:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/amazon.mrs"
+
+    path: ./ruleset/amazon.mrs
+
+  bahamut:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bahamut.mrs"
+
+    path: ./ruleset/bahamut.mrs
+
+  tiktok:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/tiktok.mrs"
+
+    path: ./ruleset/tiktok.mrs
+
+  spotify:
+    <<: *provider_template
+
+    url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/spotify.mrs"
+
+    path: ./ruleset/spotify.mrs
